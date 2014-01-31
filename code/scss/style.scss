@@ -1,0 +1,174 @@
+$med_grey: #898682;
+$light_grey: #cccbcb;
+
+* {margin: 0; padding: 0;}
+
+body {
+	width: 100%;
+	height: 100%;
+	font-family: "Letter Gothic Std";
+	background: url("../img/landingpage_bg.jpg") no-repeat center center fixed;
+	background-size: cover;
+}
+
+#content {
+	width: 100%;
+	height: 100%;
+}
+
+#title {
+	width: 25%;
+	height: 100%;
+	margin: 0 auto;
+	margin-top: 17%;
+
+	transform:rotate(-4.5deg);
+	-ms-transform:rotate(-4.5deg); /* IE 9 */
+	-webkit-transform:rotate(-4.5deg); /* Safari and Chrome */
+	
+	h1 {
+		width: 79%;
+		margin: 0 auto;
+		color: $med_grey;
+		font-size: 2.6rem;
+		text-align: center;
+		font-weight: normal;
+		border-bottom: 1px solid #2c2b29;
+	}
+
+	h3 {
+		color: $med-grey;
+		font-size: 1.0rem;
+		font-weight: normal;
+		text-align: center;
+		padding-top: 4%;
+	}
+}
+
+#begin {
+	width: 33%;
+	height: 100%;
+	margin: 0 auto;
+	margin-top: 40%;
+	background: lime;
+	font-size: 1.6rem;
+	padding: 2.3% 0% 1.5% 0%;
+	text-align: center;
+	background: $med-grey;
+	border-radius: 6px;
+
+	transition: background-color 0.5s;
+
+	&:hover{
+		background-color: #9e9b96;
+		transition: background-color 0.5s;
+	}
+
+	a:link, a:visited {
+		color: #281e15;
+		text-decoration: none;
+		padding: 10% 13%;
+	}
+}
+
+#login-visible {
+	position: absolute;
+	width: 400px;
+	height: 360px;
+	top: 50%;
+	left: 50%;
+	margin-top: -180px;
+	margin-left: -200px;
+	padding: 2%;
+	background: #111111;
+	opacity: 0.95;
+
+	transition: opacity 0.5s;
+
+	h2 {
+		font-size: 1.7rem;
+		color: $light_grey;
+		margin: 15px 0px 30px 100px;
+		font-weight: normal;
+	}
+
+	p {
+		color: $light_grey;
+		font-size: 0.9rem;
+		margin: 3% 0;
+	}
+
+	img {
+		float: left;
+	}
+}
+
+#login-hidden {
+	height: 0%;
+	width: 0%;
+	position: absolute;
+	top: -99999px;
+	left: -99999px;
+	opacity: 0.0;
+
+	transition: opacity 0.5s;
+
+}
+
+#exit-button {
+	display: block;
+	width: 23px;
+	height: 23px;
+	background: url("../img/exitbutton.png");
+	float: right;
+
+	transition: background 0.5s;
+
+	&:hover{
+		background: url("../img/exitbutton_hover.png");
+		transition: background 0.5s;
+	}
+}
+
+#connect {
+	width: 33%;
+	height: 40px;
+	margin: 0 auto;
+	margin-top: 6%;
+	background: lime;
+	font-size: 1.6rem;
+	padding: 3% 0% .5% 0%;
+	text-align: center;
+	background: $med-grey;
+	border-radius: 6px;
+
+	transition: background-color 0.5s;
+
+	&:hover{
+		background-color: #9e9b96;
+		transition: background-color 0.5s;
+	}
+
+	a:link, a:visited {
+		color: #281e15;
+		text-decoration: none;
+	}
+}
+
+#backtomain {
+	display: block;
+	width: 30%;
+	color: $light_grey;
+	text-align: center;
+	font-size: 0.9rem;
+	font-weight: normal;
+	text-decoration: none;
+	margin: 10px auto;
+
+	transition: color 0.5s;
+
+	&:hover{
+		color: #f6f6f6;
+		transition: color 0.5s;
+	}
+}
