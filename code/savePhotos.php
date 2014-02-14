@@ -1,9 +1,7 @@
 <?php
-	$mysql = mysql_connect('localhost', 'root', 'machine12');
-	mysql_select_db('thesis', $mysql);
+	$mysql = mysql_connect('localhost', 'root', 'root');
+	mysql_select_db('Thesis', $mysql);
 
-	//$data = $_POST['object'];
-	//print_r($_POST);
 	$data = $_POST;
 
 	$idList = array();
@@ -32,8 +30,12 @@
 				file_put_contents("instagram_img/" . $uniqueId . ".jpg", $image);
 			}
 
+				$time = $d['created_time'];
+				$caption = $d['caption']['text'];
+				$name = $d['user']['full_name'];
+
 				//Insert the info into our database
-				$sql = "INSERT INTO Photos (photo_link, url) VALUES ('$uniqueId', '$imageUrl')";
+				$sql = "INSERT INTO Photos (photo_link, url, time, caption, name) VALUES ('$uniqueId', '$imageUrl', '$time', '$caption', '$name')";
 				$query = mysql_query($sql);
 		}
 

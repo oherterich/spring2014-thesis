@@ -1,5 +1,5 @@
 var clientid = "3a4831a9152845bcb5caa94f713a8d00";
-var redirectURL = "http://isharethereforeiam.com/thesis/";
+var redirectURL = "http://macaroni.local/GradSchool/ThesisSpring/spring2014-thesis/code/";
 var authURL = "https://api.instagram.com/oauth/authorize/?client_id=" + clientid + "&redirect_uri=" + redirectURL + "&response_type=token";
 
 var instagramLogin = document.querySelector('#connect-link');

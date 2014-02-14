@@ -12,6 +12,7 @@
 
     <script type="text/javascript">
         var photoLinks = '';
+
         $(document).ready( function() {
             var response = '';
             $.ajax({ type: "REQUEST",   
@@ -21,7 +22,6 @@
                      {
                         response = links;
                         photoLinks = jQuery.parseJSON(response);
-                        console.log(photoLinks.length);
                      }
             });
         });
