@@ -18,7 +18,7 @@ var state = 0;
 var imageSize = 500;
 
 //Determine boundary percentage for moving camera
-var boundaryPct = 0.1;
+var boundaryPct = 0.25;
 
 //Max speed for camera pan
 var panMaxSpeed = 10;
@@ -418,18 +418,21 @@ function moveCamera(x, y) {
 	var disY = Math.abs(h / 2 - y);
 
 	if (x < w * boundaryPct) {
-		camSpeedX = map_range(disX, w/2 * 0.6, w/2, 0, -panMaxSpeed);
+		camSpeedX = map_range(disX, w * boundaryPct, w/2, 0, -panMaxSpeed);
 	}
 	else if (x > w - w * boundaryPct) {
-		camSpeedX = map_range(disX, w/2 * 0.6, w/2, 0, panMaxSpeed);
+		camSpeedX = map_range(disX, w * boundaryPct, w/2, 0, panMaxSpeed);
 	}
 	
 	if (y < h * boundaryPct) {
-		camSpeedY = map_range(disY, 0, h/2, 0, panMaxSpeed);
+		camSpeedY = map_range(disY, h * boundaryPct, h/2, 0, panMaxSpeed);
 	}
 	else if (y > h - h * boundaryPct) {
-		camSpeedY = map_range(disY, 0, h/2, 0, -panMaxSpeed);
+		camSpeedY = map_range(disY, h * boundaryPct, h/2, 0, -panMaxSpeed);
 	}
+
+	console.log(camSpeedX + " | " + camSpeedY);
+	//console.log(disX + " | " + disY);
 }
 
 
@@ -500,6 +503,51 @@ function setSelectedImage() {
 		}
 	}
 }
+
+/***************************************************************************************************************/
+/***************************************************************************************************************/
+/********************************************ANIMATION FUNCTIONS************************************************/
+/***************************************************************************************************************/
+/***************************************************************************************************************/
+
+function rotateImage( direction ) {
+	//If direction is equal to zero, rotate in a negative direction
+	if (direction == 0) {
+		if (planeList[selectedImage].rotation.y >= -Math.PI) {
+			planeList[selectedImage].rotation.y -= 0.3;
+			metaPlane.rotation.y -= 0.3;
+		}
+	}
+
+	//If direction is equal to one, rotate in a positive direction
+	else if (direction == 1) {
+		if (planeList[selectedImage].rotation.y <= Math.PI) {
+			planeList[selectedImage].rotation.y += 0.3;
+			metaPlane.rotation.y += 0.3;
+		}
+	}
+
+	else if (direction == 2) {
+		if ( planeList[selectedImage].rotation.y < 0) {
+			 planeList[selectedImage].rotation.y += 0.3;
+			 metaPlane.rotation.y += 0.3;
+		}
+	}
+
+	else if (direction == 3) {
+		if ( planeList[selectedImage].rotation.y > 0 ) {
+			planeList[selectedImage].rotation.y -= 0.3;
+			metaPlane.rotation.y -= 0.3;
+		}	
+	}
+
+	else if (direction == 4) {
+		planeList[selectedImage].rotation.y = 0;
+		metaPlane.rotation.y = Math.PI;
+	}
+}
+
+
 
 /***************************************************************************************************************/
 /***************************************************************************************************************/
@@ -594,13 +642,20 @@ function animate(t) {
 		lookAtThis.position.set(camera.position.x, camera.position.y, camera.position.z - 1000);
 
 		//Check to see if we need to rotate the image plane
-		if ( mouse.x > w / 2 - imageSize * 2 / 3 && mouse.x < w / 2 - imageSize / 3) {
-			planeList[selectedImage].rotation.y -= 0.05;
-			metaPlane.rotation.y -= 0.05;
+		if ( mouse.x < w / 2 - imageSize / 3) {
+			rotateImage(0);
 		}
-		if ( mouse.x < w / 2 + imageSize * 2 / 3 && mouse.x > w / 2 + imageSize / 3) {
-			planeList[selectedImage].rotation.y += 0.05;
-			metaPlane.rotation.y += 0.05;
+		else if ( mouse.x > w / 2 + imageSize / 3) {
+			rotateImage(1);
+		}
+		else if ( mouse.x < w / 2) {
+			rotateImage(2);
+		}
+		else if ( mouse.x > w / 2 ) {
+			rotateImage(3);
+		}
+		else {
+			rotateImage(4);
 		}
 	}
 
