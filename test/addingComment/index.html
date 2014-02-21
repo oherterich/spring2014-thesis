@@ -2,10 +2,32 @@
 <html>
 	<head>
 		<title>Comment Test</title>
+		
+		<style>
+			* { margin: 0; padding: 0; }
+
+			.textbox-visible {
+				width: 200px;
+				height: 100px;
+
+				position: absolute;
+				top: 10px;
+				left: 10px;
+			}
+
+			.textbox-hidden {
+				position: absolute;
+				top: -9999px;
+				left: -9999px;
+			}
+		</style>
+
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	</head>
 	<body>
-		<textarea>
-			Hi.
-		</textarea>
+		<textarea id="textbox" class="textbox-visible"></textarea>
+		<div id="all-comments"></div>
+
+		<script src="main.js"></script>
 	</body>
 </html>
