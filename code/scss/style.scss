@@ -3,6 +3,11 @@ $light_grey: #cccbcb;
 
 * {margin: 0; padding: 0;}
 
+html {
+	width: 100%;
+	height: 100%;
+}
+
 body {
 	width: 100%;
 	height: 100%;
@@ -47,7 +52,7 @@ body {
 
 #begin {
 	width: 33%;
-	height: 100%;
+	height: 30px;
 	margin: 0 auto;
 	margin-top: 40%;
 	background: lime;
@@ -171,4 +176,30 @@ body {
 		color: #f6f6f6;
 		transition: color 0.5s;
 	}
+}
+
+.loading-visible {
+	width: 100%;
+	height: 100%;
+
+	background: #000;
+	opacity: 0.6;
+
+	position: absolute;
+	top: 0px;
+	left: 0px;
+
+	h2 {
+		font-size: 2.0rem;
+		color: #eee;
+		font-weight: normal;
+		text-align: center;
+		margin-top: 25%;
+	}
+}
+
+.loading-hidden {
+	position: absolute;
+	top: 0px;
+	left: 0px;
 }

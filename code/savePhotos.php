@@ -30,7 +30,7 @@
 				file_put_contents("instagram_img/" . $uniqueId . ".jpg", $image);
 			}
 
-				$time = $d['created_time'];
+				$time = date('m/d/Y', $d['created_time']);
 				$caption = $d['caption']['text'];
 				$name = $d['user']['full_name'];
 

@@ -20,6 +20,15 @@ var imageSize = 500;
 //Determine boundary percentage for moving camera
 var boundaryPct = 0.25;
 
+//Boundary for edges of world
+var horizBoundary = 6400;
+var vertBoundary = 3600;
+
+//Variable that controls the small rectangle in the HUD;
+var userPosition = document.getElementById("user-position");
+var HUD = document.getElementById("HUD");
+var bMap = true;
+
 //Max speed for camera pan
 var panMaxSpeed = 10;
 
@@ -108,8 +117,8 @@ var camSpeedY = 0.0;
 var scene = new THREE.Scene();
 
 //Light for state 0
-var light = new THREE.SpotLight(0xE8E0BE, 1.0, 5000.0, Math.PI/8, 75.0); //smaller
-//var light = new THREE.SpotLight(0xE8E0BE, 1.0, 10000.0, Math.PI/4, 10.0); //bigger
+//var light = new THREE.SpotLight(0xE8E0BE, 1.0, 5000.0, Math.PI/8, 75.0); //smaller
+var light = new THREE.SpotLight(0xE8E0BE, 1.0, 10000.0, Math.PI/4, 10.0); //bigger
 scene.add(light);
 
 //Light for state 1
@@ -132,14 +141,92 @@ renderer.shadowMapEnabled = true;
 //enable shadows for a light
 light.castShadow = true;
 
+
+/***************************************************************************************/
+/********************************META DATA + PLANE STUFF********************************/
+/***************************************************************************************/
 //Create plane for meta data
 var metaPlaneGeo = new THREE.PlaneGeometry( imageSize, imageSize, 10, 10);
-var metaPlaneText = THREE.ImageUtils.loadTexture("instagram_img/paper-back.jpg");
+var metaPlaneTexture = THREE.ImageUtils.loadTexture("instagram_img/paper-back.jpg");
 var metaPlaneBump = THREE.ImageUtils.loadTexture("instagram_img/paper-back-bump.jpg");
-var metaPlaneMat = new THREE.MeshPhongMaterial( { map: metaPlaneText, bumpMap: metaPlaneBump, bumpScale: 1 } );
+var metaPlaneMat = new THREE.MeshPhongMaterial( { map: metaPlaneTexture, bumpMap: metaPlaneBump, bumpScale: 1 } );
 var metaPlane = new THREE.Mesh( metaPlaneGeo, metaPlaneMat );
 metaPlane.rotation.y = Math.PI;
 scene.add(metaPlane);
+
+//CREATE NAME PLANE + CANVAS ELEMENT
+var metaDataText_name = "Hello, World!";
+var metaCanvas_name = document.createElement('canvas');
+metaCanvas_name.width = 500;
+metaCanvas_name.height = 500;
+var metaContext_name = metaCanvas_name.getContext('2d');
+metaContext_name.font = "36px Font";
+metaContext_name.fillStyle = "rgba(40,40,40,0.9)";
+metaContext_name.fillText(metaDataText_name, 0, 50);
+
+var metaDataTexture_name = new THREE.Texture(metaCanvas_name);
+metaDataTexture_name.needsUpdate = true;
+
+var metaDataMat_name = new THREE.MeshPhongMaterial( { map: metaDataTexture_name } );
+metaDataMat_name.transparent = true;
+
+var metaData_name = new THREE.Mesh(
+	new THREE.PlaneGeometry(metaCanvas_name.width, metaCanvas_name.height),
+	metaDataMat_name
+	);
+metaData_name.position.set(0,0,10);
+metaData_name.rotation.y = Math.PI;
+scene.add( metaData_name );
+
+//CREATE DATE PLANE + CANVAS ELEMENT
+var metaDataText_date = "Hello, World!";
+var metaCanvas_date = document.createElement('canvas');
+metaCanvas_date.width = 500;
+metaCanvas_date.height = 500;
+var metaContext_date = metaCanvas_date.getContext('2d');
+metaContext_date.font = "24px Font";
+metaContext_date.fillStyle = "rgba(40,40,40,0.9)";
+metaContext_date.fillText(metaDataText_date, 0, 50);
+
+var metaDataTexture_date = new THREE.Texture(metaCanvas_date);
+metaDataTexture_date.needsUpdate = true;
+
+var metaDataMat_date = new THREE.MeshPhongMaterial( { map: metaDataTexture_date } );
+metaDataMat_date.transparent = true;
+
+var metaData_date = new THREE.Mesh(
+	new THREE.PlaneGeometry(metaCanvas_date.width, metaCanvas_date.height),
+	metaDataMat_date
+	);
+metaData_date.position.set(0,0,10);
+metaData_date.rotation.y = Math.PI;
+scene.add( metaData_date );
+
+//CREATE CAPTION PLANE + CANVAS ELEMENT
+var metaDataText_caption = "Hello, World!";
+var metaCanvas_caption = document.createElement('canvas');
+metaCanvas_caption.width = 500;
+metaCanvas_caption.height = 500;
+var metaContext_caption = metaCanvas_caption.getContext('2d');
+metaContext_caption.font = "28px Font";
+metaContext_caption.fillStyle = "rgba(40,40,40,0.9)";
+metaContext_caption.fillText(metaDataText_caption, 0, 50);
+
+var metaDataTexture_caption = new THREE.Texture(metaCanvas_caption);
+metaDataTexture_caption.needsUpdate = true;
+
+var metaDataMat_caption = new THREE.MeshPhongMaterial( { map: metaDataTexture_caption } );
+metaDataMat_caption.transparent = true;
+
+var metaData_caption = new THREE.Mesh(
+	new THREE.PlaneGeometry(metaCanvas_caption.width, metaCanvas_caption.height),
+	metaDataMat_caption
+	);
+metaData_caption.position.set(0,0,10);
+metaData_caption.rotation.y = Math.PI;
+scene.add( metaData_caption );
+
+/***************************************************************************************/
 
 
 //INITIALIZE VARIABLES
@@ -157,8 +244,8 @@ var prevMouseY = 0;
 var planeList = [];
 
 for (var i = 0; i < photoLinks.length; i++) {
-	var x = Math.random() * 2000 - 1000;
-	var y = Math.random() * 2000 - 1000;
+	var x = Math.random() * 4000 - 2000;
+	var y = Math.random() * 4000 - 2000;
 	var z = Math.random() * 10;
 
 	var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
@@ -278,8 +365,6 @@ function changeTexture() {
 				var rand = Math.floor(Math.random() * 31);
 				var texture = THREE.ImageUtils.loadTexture("img/instagram_" + rand + ".jpg");
 				planeList[i].material.map = texture;
-
-				//console.log(lookAtThis.position.x + " " + lookAtThis.position.y + " " + lookAtThis.position.z);
 			}
 		}
 	}
@@ -294,28 +379,32 @@ function changeTexture() {
 /***************************************************************************************************************/
 
 document.body.addEventListener('mousemove', function (evt) {
-  moveInfo.x = evt.clientX;
-  moveInfo.y = evt.clientY;
+	moveInfo.x = evt.clientX;
+  	moveInfo.y = evt.clientY;
 
-  mouse.x = evt.clientX;
-  mouse.y = evt.clientY;
+ 	mouse.x = evt.clientX;
+  	mouse.y = evt.clientY;
 
-  pickMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-  pickMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	pickMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	pickMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
-  if (evt.clientX > w - w * boundaryPct || evt.clientX < w * boundaryPct || evt.clientY > h - h * boundaryPct || evt.clientY < h * boundaryPct) {
-  	moveCamera(evt.clientX, evt.clientY);
-  }
-  else {
-  	camSpeedX = 0.0;
-  	camSpeedY = 0.0;
-  }
+	if (mouseDown < 1) {
+	  if (evt.clientX > w - w * boundaryPct || evt.clientX < w * boundaryPct || evt.clientY > h - h * boundaryPct || evt.clientY < h * boundaryPct) {
+	  	moveCamera(evt.clientX, evt.clientY);
+	  }
+	  else {
+	  	camSpeedX = 0.0;
+	  	camSpeedY = 0.0;
+	  }
+	}
 
 }, false);
 
 //Listen for key presses
 window.addEventListener('keypress', function (evt) {
-	
+	if (evt.keyCode == 77 || evt.keyCode == 109) {
+		bMap = !bMap;
+	}
 }, false);
 
 //Listen for clicks
@@ -354,11 +443,6 @@ document.addEventListener("mouseup", function (evt) {
 
 function checkPicClick( id ) {
 	for (var i = 0; i < planeList.length; i++) {
-
-		// var d = lineLength(planeList[i].position.x, planeList[i].position.y, lookAtThis.position.x, lookAtThis.position.y);
-
-		// if (d < imageSize / 2) {
-
 		if ( planeList[i].id == id) {
 			//If we have a match, make that image our "selected" image
 			selectedImage = i;
@@ -370,6 +454,11 @@ function checkPicClick( id ) {
 
 			//Let's also set the position of the meta plane so that we can see it later.
 			metaPlane.position.set(camera.position.x, camera.position.y, camera.position.z - 800);
+
+			//Set the position of the text on the back on the photo
+			metaData_name.position.set(camera.position.x, camera.position.y, camera.position.z - 799.9);
+			metaData_date.position.set(camera.position.x, camera.position.y, camera.position.z - 799.9);
+			metaData_caption.position.set(camera.position.x, camera.position.y, camera.position.z - 799.9);
 
 			//Instead of removing original light, turn down intensity to 0. 
 			//This removes the need to update the material later.
@@ -385,9 +474,37 @@ function checkPicClick( id ) {
 			planeList[i].material.needsUpdate = true;
 
 			//Change to the looking at image state.
-			state = 1; 
+			state = 1;
+
+			//Solution to clearing canvas found at: 
+			//http://stackoverflow.com/questions/2142535/how-to-clear-the-canvas-for-redrawing
+			//Set the text for the meta data to the correct stuff.
+			metaDataText_name = photoLinks[selectedImage]['name']; //Set the text to the selected name
+			metaContext_name.save(); //We need to clear the canvas properly, so we do some crazy stuff.
+			metaContext_name.setTransform(1,0,0,1,0,0); //Reset the transformation matrix
+			metaContext_name.clearRect(0, 0, metaCanvas_name.width, metaCanvas_name.height); //Clear it!!!!!!
+			metaContext_name.restore(); //Let's get it back
+			metaContext_name.fillText(metaDataText_name, getRandomInt(20,30), getRandomInt(145, 155)); //Change the fill text to our new text
+			metaDataTexture_name.needsUpdate = true; //Update dat texture
+
+			metaDataText_date = photoLinks[selectedImage]['time']; //Set the text to the selected name
+			metaContext_date.save(); //We need to clear the canvas properly, so we do some crazy stuff.
+			metaContext_date.setTransform(1,0,0,1,0,0); //Reset the transformation matrix
+			metaContext_date.clearRect(0, 0, metaCanvas_date.width, metaCanvas_date.height); //Clear it!!!!!!
+			metaContext_date.restore(); //Let's get it back
+			metaContext_date.fillText(metaDataText_date, getRandomInt(20,30), getRandomInt(110,120)); //Change the fill text to our new text
+			metaDataTexture_date.needsUpdate = true; //Update dat texture
+
+			metaDataText_caption = photoLinks[selectedImage]['caption']; //Set the text to the selected name
+			var metrics = metaContext_caption.measureText(metaDataText_caption);
+			var width = metrics.width;
+			metaContext_caption.save(); //We need to clear the canvas properly, so we do some crazy stuff.
+			metaContext_caption.setTransform(1,0,0,1,0,0); //Reset the transformation matrix
+			metaContext_caption.clearRect(0, 0, metaCanvas_caption.width, metaCanvas_caption.height); //Clear it!!!!!!
+			metaContext_caption.restore(); //Let's get it back
+			wrapText(metaContext_caption, metaDataText_caption, getRandomInt(20,30), getRandomInt(220,250), 400, 32 );
+			metaDataTexture_caption.needsUpdate = true; //Update dat texture
 		}
-	//	}
 	}
 }
 
@@ -398,6 +515,10 @@ function manageSelectedPhotoClick(x, y) {
 
 		//Reset rotations
 		metaPlane.rotation.y = Math.PI;
+		metaData_name.rotation.y = Math.PI;
+		metaData_date.rotation.y = Math.PI;
+		metaData_caption.rotation.y = Math.PI;
+
 
 		//Reset light intensities back to normal.
 		light.intensity = 1.0;
@@ -430,9 +551,6 @@ function moveCamera(x, y) {
 	else if (y > h - h * boundaryPct) {
 		camSpeedY = map_range(disY, h * boundaryPct, h/2, 0, -panMaxSpeed);
 	}
-
-	console.log(camSpeedX + " | " + camSpeedY);
-	//console.log(disX + " | " + disY);
 }
 
 
@@ -504,6 +622,27 @@ function setSelectedImage() {
 	}
 }
 
+//This function moves the rectangle inside the HUD
+function setHUD() {
+	if (bMap) {
+		var horiz = map_range(camera.position.x, -horizBoundary, horizBoundary, 0, 256) - 26;
+		var vert = map_range(camera.position.y, vertBoundary, -vertBoundary, 0, 160) - 16;
+
+		userPosition.style.left = horiz + "px";
+	 	userPosition.style.top = vert + "px";
+
+	 	HUD.style.right = "10px";
+	 	HUD.style.bottom = "10px";
+ 	}
+ 	else {
+ 		userPosition.style.left = "-9999px";
+ 		userPosition.style.top = "-9999px";
+
+ 		HUD.style.right = "-9999px";
+	 	HUD.style.bottom = "-9999px";
+ 	}
+}
+
 /***************************************************************************************************************/
 /***************************************************************************************************************/
 /********************************************ANIMATION FUNCTIONS************************************************/
@@ -516,6 +655,10 @@ function rotateImage( direction ) {
 		if (planeList[selectedImage].rotation.y >= -Math.PI) {
 			planeList[selectedImage].rotation.y -= 0.3;
 			metaPlane.rotation.y -= 0.3;
+			metaData_name.rotation.y -= 0.3;
+			metaData_date.rotation.y -= 0.3;
+			metaData_caption.rotation.y -= 0.3;
+
 		}
 	}
 
@@ -524,26 +667,42 @@ function rotateImage( direction ) {
 		if (planeList[selectedImage].rotation.y <= Math.PI) {
 			planeList[selectedImage].rotation.y += 0.3;
 			metaPlane.rotation.y += 0.3;
+			metaData_name.rotation.y += 0.3;
+			metaData_date.rotation.y += 0.3;
+			metaData_caption.rotation.y += 0.3;
+
 		}
 	}
 
+	//Rotate image back to normal
 	else if (direction == 2) {
 		if ( planeList[selectedImage].rotation.y < 0) {
 			 planeList[selectedImage].rotation.y += 0.3;
 			 metaPlane.rotation.y += 0.3;
+			 metaData_name.rotation.y += 0.3;
+			 metaData_date.rotation.y += 0.3;
+			 metaData_caption.rotation.y += 0.3;
 		}
 	}
 
+	//Rotate image back to normal
 	else if (direction == 3) {
 		if ( planeList[selectedImage].rotation.y > 0 ) {
 			planeList[selectedImage].rotation.y -= 0.3;
 			metaPlane.rotation.y -= 0.3;
+			metaData_name.rotation.y -= 0.3;
+			metaData_date.rotation.y -= 0.3;
+			metaData_caption.rotation.y -= 0.3;
 		}	
 	}
 
+	//We need to account for if the rotation is exactly 0;
 	else if (direction == 4) {
 		planeList[selectedImage].rotation.y = 0;
 		metaPlane.rotation.y = Math.PI;
+		metaData_name.rotation.y = Math.PI;
+		metaData_date.rotation.y = Math.PI;
+		metaData_caption.rotation.y = Math.PI;
 	}
 }
 
@@ -576,6 +735,33 @@ function map_range(value, low1, high1, low2, high2) {
     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
+//From http://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
+function wrapText(context, text, x, y, maxWidth, lineHeight) {
+	var words = text.split(' ');
+	var line = '';
+
+	for(var n = 0; n < words.length; n++) {
+	  var testLine = line + words[n] + ' ';
+	  var metrics = context.measureText(testLine);
+	  var testWidth = metrics.width;
+	  if (testWidth > maxWidth && n > 0) {
+	    context.fillText(line, x, y);
+	    line = words[n] + ' ';
+	    y += lineHeight;
+	  }
+	  else {
+	    line = testLine;
+	  }
+	}
+	context.fillText(line, x, y);
+}
+
+/***************************************************************************************************************/
+/***************************************************************************************************************/
+/**********************************************ANIMATION FUNCTION***********************************************/
+/***************************************************************************************************************/
+/***************************************************************************************************************/
+
 function animate(t) {
 
 	if (camera.position.z < 1000) {
@@ -604,8 +790,31 @@ function animate(t) {
 		// 	checkPlaneDistance();
 		// }
 
+	//Check to see if the camera has gone out of the boundary
+	if (camera.position.x > horizBoundary - w / 2) {
+		camSpeedX = 0;
+		camera.position.x = horizBoundary - w / 2;
+	}
+
+	if (camera.position.x < -horizBoundary + w / 2) {
+		camSpeedX = 0;
+		camera.position.x = -horizBoundary + w / 2;
+	}
+	
+	if (camera.position.y > vertBoundary - h / 2) {
+		camSpeedY = 0;
+		camera.position.y = vertBoundary - h / 2;
+	}
+
+	if (camera.position.y < -vertBoundary + h / 2) {
+		camSpeedY = 0;
+		camera.position.y = -vertBoundary + h / 2;
+	}
+
 		camera.position.x += camSpeedX;
 		camera.position.y += camSpeedY;
+
+		setHUD();
 
 		var angle = map_range(camera.position.z, 1000, 4500, Math.PI/8, Math.PI/40);
 		var exponent = map_range(camera.position.z, 1000, 4500, 75.0, 500.0);
@@ -623,7 +832,17 @@ function animate(t) {
 		setProjection();
 
 		if (mouseDown) {
-			slideImages();
+			slideImages(); //Function to drag images.
+
+			//Set the camera speed to zero
+			camSpeedX = 0;
+			camSpeedY = 0;
+
+			//Make light bigger when you're dragging an image.
+			light.intensity = 1.5;
+			light.angle = Math.PI / 4;
+			light.exponent = 30.0;
+
 			mouseDownCount++;
 		}
 

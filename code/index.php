@@ -25,6 +25,9 @@
 			</article>
 			<a id="backtomain" href="three.html">No, thanks.</a>
 		</section>
+		<section class="loading-hidden">
+			<h2>Loading...</h2>
+		</section>
 	</section>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>	
 	<script type="text/javascript" src="instafeed.min.js"></script>

@@ -30,8 +30,13 @@ exitButton.addEventListener('click', function(evt) {
 	login.id = "login-hidden";
 })
 
+var loading = document.querySelector(".loading-hidden");
+console.log(loading);
 
-
+function showLoading() {
+	loading.classList.remove("loading-hidden");
+	loading.classList.add("loading-visible");
+}
 
 
 
@@ -62,6 +67,8 @@ $(document).ready(function(){
 	//getUserId();
 	
 	 function getUserPhotos() {
+	 	showLoading();
+
 	 	var URL = "https://api.instagram.com/v1/users/" + userid + "/media/recent?access_token=" + hash;
 		$.ajax({
 			url : URL,
@@ -72,6 +79,8 @@ $(document).ready(function(){
 					url : "savePhotos.php",
 					dataType : "jsonp",
 					data : parsed_json,
+					complete : function() {
+					}
 				})
 				.always(function (data) {
 					window.location="three.html";
