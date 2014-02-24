@@ -504,6 +504,8 @@ function checkPicClick( id ) {
 			metaContext_caption.restore(); //Let's get it back
 			wrapText(metaContext_caption, metaDataText_caption, getRandomInt(20,30), getRandomInt(220,250), 400, 32 );
 			metaDataTexture_caption.needsUpdate = true; //Update dat texture
+
+			addTextbox();
 		}
 	}
 }
@@ -530,6 +532,8 @@ function manageSelectedPhotoClick(x, y) {
 
 		//Set selectedImage back to a non-number
 		selectImage = -1; 
+
+		removeTextbox();
 	}
 }
 

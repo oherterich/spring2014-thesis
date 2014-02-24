@@ -6,59 +6,24 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
+    <link rel="stylesheet" href="css/style-three.css">
+
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>	
     <script src="three.min.js"></script>
     <script src="TrackballControls.js"></script>
-
-    <script type="text/javascript">
-        var photoLinks = '';
-
-        $(document).ready( function() {
-            var response = '';
-            $.ajax({ type: "REQUEST",   
-                     url: "getPhotoLinks.php",   
-                     async: false,
-                     success : function(links)
-                     {
-                        response = links;
-                        photoLinks = jQuery.parseJSON(response);
-                     }
-            });
-        });
-    </script>
-
-    <style>
-    	* { margin: 0; padding: 0; overflow: hidden;}
-        
-        @font-face {
-            font-family: 'Font';
-            src: url("css/font/ReenieBeanie.ttf");
-        }
-
-        #HUD {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            width: 256px;
-            height: 160px;
-            border: 1px solid #999;
-        }
-
-        #user-position {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            width: 52px;
-            height: 32px;
-            border: 1px solid #bb0000;
-        }   
-    </style>
 </head>
 <body>
 	<div id="container"></div>
     <div id="HUD">
         <div id="user-position"></div>
     </div>
+    <div id="textContainer" class="textbox-hidden">
+        <textarea id="textbox"></textarea>
+        <input type="submit" id="submit">
+    </div>
+    <div id="notes">
+    </div>
 	<script src="script.js"></script>
+    <script src="main-three.js"></script>
 </body>
 </html>
