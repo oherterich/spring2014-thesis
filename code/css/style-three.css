@@ -5,7 +5,10 @@
 
 @font-face {
   font-family: 'Font';
-  src: url("css/font/ReenieBeanie.ttf"); }
+  src: url("font/ReenieBeanie.ttf"); }
+
+body {
+  font-family: "Font", serif; }
 
 #HUD {
   position: fixed;
@@ -27,6 +30,9 @@
   position: absolute;
   top: 53%;
   left: 33%; }
+  #notes p {
+    font-size: 1.2rem;
+    color: #1C1A15; }
 
 .textbox-visible {
   width: 200px;

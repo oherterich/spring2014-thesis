@@ -1,5 +1,10 @@
 var photoLinks;
 var commentList;
+var notes = document.getElementById("notes");
+var textContainer = document.getElementById("textContainer");
+var textbox = document.getElementById("textbox");
+var submit = document.getElementById("submit");
+var bActiveTextbox = false;
 
 //When the page loads, we want to get our photo links and notes from the database
 $(document).ready( function() {
@@ -25,7 +30,6 @@ $(document).ready( function() {
     });
 
     function createNotes( userid ) {
-        var notes = document.getElementById("notes");
 
         for ( var i = 0; i < commentList.length; i++) {
             if ( commentList[i]['userid'] == userid ) {
@@ -38,11 +42,6 @@ $(document).ready( function() {
 });
 
 //Functions for easily adding/removing the textbox from our page
-var textContainer = document.getElementById("textContainer");
-var textbox = document.getElementById("textbox");
-var submit = document.getElementById("submit");
-var bActiveTextbox = false;
-
 function addTextbox() {
     textContainer.classList.add("textbox-visible");
     textContainer.classList.remove("textbox-hidden");
@@ -53,6 +52,14 @@ function removeTextbox() {
     textContainer.classList.remove("textbox-visible");
     textContainer.classList.add("textbox-hidden");
     bActiveTextbox = false;
+}
+
+function addNote( note ) {
+    var newNote = document.createElement("p");
+    newNote.innerHTML = note;
+    console.log(newNote);
+    notes.appendChild(newNote);
+
 }
 
 function saveComment( text ) {
@@ -73,11 +80,13 @@ textbox.addEventListener('keydown', function(evt) {
     if (evt.keyCode == 13) {
         var userComment = textbox.value;
         saveComment( userComment );
+        removeTextbox();
     }
 });
 
 submit.addEventListener('click', function(evt) {
     var userComment = textbox.value;
     saveComment( userComment );
+    removeTextbox();
 });
 
