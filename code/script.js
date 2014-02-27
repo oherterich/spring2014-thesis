@@ -135,6 +135,8 @@ var lookAtThisText = new THREE.MeshLambertMaterial({ color: 0xFF0000, transparen
 var lookAtThis = new THREE.Mesh(lookAtThisGeom, lookAtThisText);
 scene.add(lookAtThis);
 
+var prevLookAtThis = new THREE.Vector3();
+
 //enable shadows on the renderer
 renderer.shadowMapEnabled = true;
 
@@ -246,7 +248,7 @@ var planeList = [];
 for (var i = 0; i < photoLinks.length; i++) {
 	var x = Math.random() * 4000 - 2000;
 	var y = Math.random() * 4000 - 2000;
-	var z = Math.random() * 10;
+	var z = Math.random() * 1;
 
 	var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
 	//var w = Math.random() * 10;
@@ -505,7 +507,7 @@ function checkPicClick( id ) {
 			wrapText(metaContext_caption, metaDataText_caption, getRandomInt(20,30), getRandomInt(220,250), 400, 32 );
 			metaDataTexture_caption.needsUpdate = true; //Update dat texture
 
-			addTextbox();
+			//addTextbox();
 		}
 	}
 }
@@ -610,8 +612,12 @@ function slideImages() {
 		for (var i = 0; i < planeList.length; i++) {
 			if (planeList[i].id == INTERSECTED.id) {
 
-				planeList[i].position.x = lookAtThis.position.x;
-				planeList[i].position.y = lookAtThis.position.y;
+				// planeList[i].position.x = lookAtThis.position.x;
+				// planeList[i].position.y = lookAtThis.position.y;
+				planeList[i].position.x += lookAtThis.position.x - prevLookAtThis.x;
+				planeList[i].position.y += lookAtThis.position.y - prevLookAtThis.y;
+
+				console.log( planeList[i].position.x + " | " + planeList[i].position.y);
 			}
 		}
 	}
@@ -852,6 +858,10 @@ function animate(t) {
 
 		lightOffsetX = map_range(moveInfo.x, 0, w, -120, -570);
 		lightOffsetY = map_range(moveInfo.y, 0, h, 80, -200);
+
+		prevLookAtThis.x = lookAtThis.position.x;
+		prevLookAtThis.y = lookAtThis.position.y;
+		prevLookAtThis.z = lookAtThis.position.z;
 
 		lookAtThis.position.x = directionVector.x - SCREEN_WIDTH / 2 + lightOffsetX;
 		lookAtThis.position.y = directionVector.y + SCREEN_HEIGHT / 2 + lightOffsetY;
