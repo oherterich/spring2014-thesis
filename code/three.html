@@ -14,15 +14,19 @@
 </head>
 <body>
 	<div id="container"></div>
+    <div id="instructions">
+        <img src="img/left-arrow.png" id="left-arrow" class="arrow-left-hidden">
+        <img src="img/right-arrow.png" id="right-arrow" class="arrow-right-hidden">
+    </div>
     <div id="HUD">
         <div id="user-position"></div>
     </div>
-    <!--<div id="textContainer" class="textbox-hidden">
-        <textarea id="textbox"></textarea>
-        <input type="submit" id="submit">
+    <div id="textContainer" class="textcontainer-hidden">
+        <div id="notes" class="notes-visible">
+        </div>
+        <textarea id="textbox" class="textbox-visible"></textarea>
+        <input type="submit" id="submit" class="textbox-visible">
     </div>
-    <div id="notes">
-    </div>-->
 	<script src="script.js"></script>
     <script src="main-three.js"></script>
 </body>

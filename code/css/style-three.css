@@ -27,26 +27,73 @@ body {
   border: 1px solid #bb0000; }
 
 #notes {
-  position: absolute;
-  top: 53%;
-  left: 33%; }
+  position: relative; }
   #notes p {
     font-size: 1.2rem;
-    color: #1C1A15; }
+    color: #1C1A15;
+    margin: 1.5%; }
 
-.textbox-visible {
-  width: 200px;
-  height: 100px;
+.notes-visible {
+  opacity: 0.9;
+  transition: opacity 0.2s; }
+
+.notes-hidden {
+  opacity: 0.0;
+  transition: opacity 0.2s; }
+
+#textbox {
+  position: relative;
+  width: 100%;
+  margin: 1% 0;
+  font-family: "Font", serif;
+  font-size: 1.2rem;
+  color: #1C1A15;
+  background: none;
+  border: none;
+  outline-style: none;
+  resize: none; }
+
+.textcontainer-visible {
+  width: 250px;
+  height: 100%;
   position: absolute;
   top: 53%;
-  left: 43%;
+  left: 33%;
   /*border: none;
   resize: none;*/ }
 
-.textbox-visible:focus {
-  /* outline: none;*/ }
+.textcontainer-hidden {
+  position: absolute;
+  top: -9999px;
+  left: -9999px; }
+
+.textbox-visible {
+  top: 0px;
+  left: 0px; }
 
 .textbox-hidden {
   position: absolute;
   top: -9999px;
   left: -9999px; }
+
+.arrow-left-visible {
+  position: absolute;
+  top: 47%;
+  left: 28%;
+  opacity: 0.6;
+  transition: opacity 0.2s; }
+
+.arrow-left-hidden {
+  opacity: 0.0;
+  transition: opacity 0.2s; }
+
+.arrow-right-visible {
+  position: absolute;
+  top: 47%;
+  left: 71%;
+  opacity: 0.6;
+  transition: opacity 0.2s; }
+
+.arrow-right-hidden {
+  opacity: 0.0;
+  transition: opacity 0.2s; }
