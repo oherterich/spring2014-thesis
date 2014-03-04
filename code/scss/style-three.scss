@@ -27,6 +27,10 @@ body {
     border: 1px solid #bb0000;
 }   
 
+#user-position:hover {
+    cursor: pointer;
+}
+
 #notes {
     position: relative;
 
@@ -89,8 +93,26 @@ body {
     left: -9999px;
 }
 
-#instructions {
+.instruction {
+    position: absolute;
+    width: 100%;   
+    text-align: center;
+    color: #eee;
+    font-size: 1.3rem;
+}
 
+.instruction-visible {
+    bottom: 7%;
+    left: 0%;
+    opacity: 0.6;
+    transition: opacity 1.0s;
+}
+
+.instruction-hidden {
+    bottom: -9999px;
+    left: -9999px;
+    opacity: 0.0;
+    transition: opacity 1.0s;
 }
 
 .arrow-left-visible {

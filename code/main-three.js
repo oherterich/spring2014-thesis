@@ -1,14 +1,19 @@
 var container = document.getElementById("container");
 var photoLinks;
 var commentList;
+var HUD = document.getElementById("HUD");
+var userPosition = document.getElementById("user-position");
 var notes = document.getElementById("notes");
 var textContainer = document.getElementById("textContainer");
 var textbox = document.getElementById("textbox");
-var submit = document.getElementById("submit");
+//var submit = document.getElementById("submit");
 var bActiveTextbox = false;
 
 var leftArrow = document.getElementById("left-arrow");
 var rightArrow = document.getElementById("right-arrow");
+var instruction = document.getElementsByClassName("instruction");
+instruction[0].style.opacity = 0.6;
+
 
 //When the page loads, we want to get our photo links and notes from the database
 $(document).ready( function() {
@@ -49,15 +54,15 @@ function removeTextContainer() {
 function addTextbox() {
     textbox.classList.add("textbox-visible");
     textbox.classList.remove("textbox-hidden");
-    submit.classList.add("textbox-visible");
-    submit.classList.remove("textbox-hidden");
+    // submit.classList.add("textbox-visible");
+    // submit.classList.remove("textbox-hidden");
 }
 
 function removeTextbox() {
     textbox.classList.add("textbox-hidden");
     textbox.classList.remove("textbox-visible");
-    submit.classList.add("textbox-hidden");
-    submit.classList.remove("textbox-visible");
+    // submit.classList.add("textbox-hidden");
+    // submit.classList.remove("textbox-visible");
 }
 
 function addLeftArrow() {
@@ -80,6 +85,16 @@ function removeRightArrow() {
     rightArrow.classList.remove("arrow-right-visible");
 }
 
+function addInstruction( index ) {
+    instruction[index].classList.add("instruction-visible");
+    instruction[index].classList.remove("instruction-hidden");
+}
+
+function removeInstruction( index ) {
+    instruction[index].classList.add("instruction-hidden");
+    instruction[index].classList.remove("instruction-visible");
+}
+
 function addNotes() {
     notes.classList.add("notes-visible");
     notes.classList.remove("notes-hidden");
@@ -100,7 +115,6 @@ function addNote( note ) {
     newNote.innerHTML = note;
     console.log(newNote);
     notes.appendChild(newNote);
-
 }
 
 //Function for adding specific notes to the back of the photo when it is selected
@@ -132,6 +146,7 @@ function saveComment( text, userid ) {
                         commentList = jQuery.parseJSON(comments);
                         clearNotes();
                         createNotes( photoLinks[selectedImage]['link'] );
+                        removeInstruction(2);
                     }
                 });
         }
@@ -144,22 +159,49 @@ textbox.addEventListener('keydown', function(evt) {
         var userid = photoLinks[selectedImage]['link'];
         saveComment( userComment, userid );
         removeTextbox();
+        textbox.blur();
+        console.log(document.activeElement.nodeName);
     }
 });
 
-submit.addEventListener('click', function(evt) {
-    var userComment = textbox.value;
-    var userid = photoLinks[selectedImage]['link'];
-    saveComment( userComment, userid );
-    removeTextbox();
-});
+// submit.addEventListener('click', function(evt) {
+//     var userComment = textbox.value;
+//     var userid = photoLinks[selectedImage]['link'];
+//     saveComment( userComment, userid );
+//     removeTextbox();
+//     textbox.blur();
+//     console.log(textbox);
+//     console.log(document.activeElement.nodeName);
+// });
 
 textbox.addEventListener('mouseover', function(evt) {
     bTextboxActive = true;
-    console.log("mouseover");
 });
 
 textbox.addEventListener('mouseout', function(evt) {
     bTextboxActive = false;
-    console.log("mouseoff");
+});
+
+userPosition.addEventListener('mouseover', function(evt) {
+    bHUDActive = true;
+});
+
+userPosition.addEventListener('mouseout', function(evt) {
+    bHUDActive = false;
+});
+
+userPosition.addEventListener('mousedown', function(evt) {
+    bHUDDraggable = true;
+    evt.preventDefault();
+    console.log("mousedown");
+});
+
+userPosition.addEventListener('mouseup', function(evt) {
+    bHUDDraggable = false;
+    console.log("mouseup");
+});
+
+userPosition.addEventListener('click', function(evt) {
+    bHUDDraggable = false;
+    console.log("click");
 });

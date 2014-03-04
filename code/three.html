@@ -14,19 +14,22 @@
 </head>
 <body>
 	<div id="container"></div>
-    <div id="instructions">
+    <section id="instructions">
         <img src="img/left-arrow.png" id="left-arrow" class="arrow-left-hidden">
         <img src="img/right-arrow.png" id="right-arrow" class="arrow-right-hidden">
-    </div>
-    <div id="HUD">
+        <p class="instruction instruction-visible">Use your mouse to explore.</p>
+        <p class="instruction instruction-hidden">Drag photos around to dig deeper, or click to get a closer look.</p>
+        <p class="instruction instruction-hidden">Leave notes for your fellow explorers.</p>
+    </section>
+    <section id="HUD">
         <div id="user-position"></div>
-    </div>
-    <div id="textContainer" class="textcontainer-hidden">
+    </section>
+    <section id="textContainer" class="textcontainer-hidden">
         <div id="notes" class="notes-visible">
         </div>
         <textarea id="textbox" class="textbox-visible"></textarea>
-        <input type="submit" id="submit" class="textbox-visible">
-    </div>
+        <!--<input type="submit" id="submit" class="textbox-visible">-->
+    </section>
 	<script src="script.js"></script>
     <script src="main-three.js"></script>
 </body>

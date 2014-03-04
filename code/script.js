@@ -21,7 +21,6 @@ var horizBoundary = 6400;
 var vertBoundary = 3600;
 
 //Variable that controls the small rectangle in the HUD;
-var userPosition = document.getElementById("user-position");
 var HUD = document.getElementById("HUD");
 var bMap = true;
 
@@ -40,6 +39,10 @@ var bIsFront = true;
 
 //Boolean to keep track of whether our textbox is active or not
 var bTextboxActive = false;
+
+//Booleans to allow us to drag around our HUD
+var bHUDActive = false;
+var bHUDDraggable = false;
 
 //This variable keeps track of which photo has been selected
 //We need this in order to move, rotate, and get the meta information for that photo.
@@ -125,7 +128,7 @@ var light = new THREE.SpotLight(0xE8E0BE, 1.0, 10000.0, Math.PI/4, 10.0); //bigg
 scene.add(light);
 
 //Light for state 1
-var clickedLight = new THREE.SpotLight(0xE8E0BE, 0.0, 10000.0, Math.PI/6, 18.0);
+var clickedLight = new THREE.SpotLight(0xE8E0BE, 0.0, 10000.0, Math.PI/5, 15.0);
 scene.add(clickedLight);
 
 //Big light to illuminate space (for testing purposes)
@@ -145,6 +148,10 @@ renderer.shadowMapEnabled = true;
 
 //enable shadows for a light
 light.castShadow = true;
+// light.shadowCameraNear = 0;
+// light.shadowCameraFar = 1600;
+// light.shadowCameraFov = 45;
+//light.shadowCameraNear = 0.01;
 
 
 /***************************************************************************************/
@@ -249,11 +256,11 @@ var prevMouseY = 0;
 // INITIALIZE GROUND PLANES
 var planeList = [];
 
-//for (var i = 0; i < photoLinks.length; i++) {
-for (var i = 0; i < 10; i++) {
+for (var i = 0; i < photoLinks.length; i++) {
+//for (var i = 0; i < 10; i++) {
 	var x = Math.random() * 4000 - 2000;
 	var y = Math.random() * 4000 - 2000;
-	var z = Math.random() * 1;
+	var z = Math.random() * 100;
 
 	var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
 	//var w = Math.random() * 10;
@@ -280,12 +287,17 @@ for (var i = 0; i < 10; i++) {
 
 	plane.rotation.z = rot;
 
+	// plane.castShadow = true;
+	// plane.receiveShadow = true;
+
 	planeList.push( plane );
 }
 
 for (var i = 0; i < planeList.length; i++) {
 	scene.add(planeList[i]);
 }
+
+console.log(planeList);
 
 
 //CREATE INITIAL BACKGROUND TEXTURE PLANE
@@ -405,6 +417,15 @@ document.body.addEventListener('mousemove', function (evt) {
 	  }
 	}
 
+	if (instruction[0].style.opacity > 0.0) {
+		instruction[0].style.opacity -= 0.005;
+		if (instruction[0].style.opacity <= 0.005){
+			instruction[0].style.opacity = 0;
+			removeInstruction(0);
+			addInstruction(1);
+		}
+	}
+
 }, false);
 
 //Listen for key presses
@@ -420,6 +441,7 @@ container.addEventListener('click', function (evt) {
 	if (state == 0) {
 		if (mouseDownCount < 10) {
 			checkPicClick( INTERSECTED.id );
+			removeInstruction(1);
 		}
 	}
 	else if (state == 1) {
@@ -435,6 +457,8 @@ container.addEventListener('click', function (evt) {
 				addTextContainer();
 				addTextbox();
 				createNotes(photoLinks[selectedImage]['link']);
+
+				addInstruction(2);
 			}
 		}
 
@@ -465,6 +489,10 @@ container.addEventListener("mousedown", function (evt) {
 
 container.addEventListener("mouseup", function (evt) {
   --mouseDown;
+
+  	//Set the draggable to false, just in case the user has moved outside of the original HUD
+	bHUDDraggable = false;
+	console.log("mouseup container");
 }, false);
 
 /***************************************************************************************************************/
@@ -499,7 +527,7 @@ function checkPicClick( id ) {
 
 			//Add the new light to illuminate selected photo.
 			//scene.add(clickedLight);
-			clickedLight.intensity = 1.0;
+			clickedLight.intensity = 1.2;
 			clickedLight.position.set(camera.position.x, camera.position.y, 1000);
 			clickedLight.target = lookAtThis;
 
@@ -686,6 +714,18 @@ function setHUD() {
  	}
 }
 
+function dragHUD() {
+	var horiz = map_range(mouse.x, w-256-26, w, 0, 256) - 26;
+	var vert = map_range(mouse.y, h-160-16, h, 0, 160) - 16;
+
+	userPosition.style.left = horiz + "px";
+	userPosition.style.top = vert + "px";
+
+	camera.position.x = map_range(horiz, 0, 256, -horizBoundary, horizBoundary);
+	camera.position.y = map_range(vert, 0, 160, vertBoundary, -vertBoundary);
+
+}
+
 function checkTextbox() {
 	if (document.activeElement.nodeName == "TEXTAREA" || document.activeElement.nodeName == "INPUT") {
 		bTextboxActive = true;
@@ -831,6 +871,8 @@ function animate(t) {
 		camera.position.z = 4500;
 	}
 
+	//console.log(bHUDDraggable + " " + mouse.x + " | " + mouse.y);
+
 	/***************************************************************************************/
 	/***************************************STATE ZERO**************************************/
 	/***************************************************************************************/
@@ -850,31 +892,44 @@ function animate(t) {
 		// 	checkPlaneDistance();
 		// }
 
-	//Check to see if the camera has gone out of the boundary
-	if (camera.position.x > horizBoundary - w / 2) {
-		camSpeedX = 0;
-		camera.position.x = horizBoundary - w / 2;
-	}
+		//Check to see if the camera has gone out of the boundary
+		if (camera.position.x > horizBoundary - w / 2) {
+			camSpeedX = 0;
+			camera.position.x = horizBoundary - w / 2;
+		}
 
-	if (camera.position.x < -horizBoundary + w / 2) {
-		camSpeedX = 0;
-		camera.position.x = -horizBoundary + w / 2;
-	}
-	
-	if (camera.position.y > vertBoundary - h / 2) {
-		camSpeedY = 0;
-		camera.position.y = vertBoundary - h / 2;
-	}
+		if (camera.position.x < -horizBoundary + w / 2) {
+			camSpeedX = 0;
+			camera.position.x = -horizBoundary + w / 2;
+		}
+		
+		if (camera.position.y > vertBoundary - h / 2) {
+			camSpeedY = 0;
+			camera.position.y = vertBoundary - h / 2;
+		}
 
-	if (camera.position.y < -vertBoundary + h / 2) {
-		camSpeedY = 0;
-		camera.position.y = -vertBoundary + h / 2;
-	}
+		if (camera.position.y < -vertBoundary + h / 2) {
+			camSpeedY = 0;
+			camera.position.y = -vertBoundary + h / 2;
+		}
 
 		camera.position.x += camSpeedX;
 		camera.position.y += camSpeedY;
 
-		setHUD();
+		if (bHUDDraggable && bHUDActive) {
+			dragHUD();
+		}
+		else {
+			setHUD();
+		}
+
+
+		if (bHUDActive) {
+			camSpeedX = 0;
+			camSpeedY = 0;
+		}
+
+		//console.log("UP" + userPosition.style.left + " | " + userPosition.style.top);
 
 		var angle = map_range(camera.position.z, 1000, 4500, Math.PI/8, Math.PI/40);
 		var exponent = map_range(camera.position.z, 1000, 4500, 75.0, 500.0);
@@ -992,8 +1047,6 @@ function animate(t) {
 			}
 		}
 	}
-
-	console.log(bTextboxActive);
 
 	window.requestAnimationFrame(animate, renderer.domElement);
 	render();
