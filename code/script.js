@@ -40,6 +40,15 @@ var bIsFront = true;
 //Boolean to keep track of whether our textbox is active or not
 var bTextboxActive = false;
 
+//We need to know if we have ever displayed the instructions before.
+var bFirstTimeNoteInstruction = true;
+var bFirstTimeClickInstruction = true;
+
+//Stuff for animating to image to front
+var moveSpeed = 0.35;
+var bMoveToFront = false;
+var putBackRotation = Math.random() * (Math.PI / 2) - (Math.PI/4);
+
 //Booleans to allow us to drag around our HUD
 var bHUDActive = false;
 var bHUDDraggable = false;
@@ -133,7 +142,7 @@ scene.add(clickedLight);
 
 //Big light to illuminate space (for testing purposes)
 var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.0);
-//scene.add(hemiLight);
+scene.add(hemiLight);
 
 //Add something for the light to look at
 var lookAtThisGeom = new THREE.Geometry(100, 100, 10, 10);
@@ -422,7 +431,9 @@ document.body.addEventListener('mousemove', function (evt) {
 		if (instruction[0].style.opacity <= 0.005){
 			instruction[0].style.opacity = 0;
 			removeInstruction(0);
-			addInstruction(1);
+			if (bFirstTimeClickInstruction) {
+				addInstruction(1);
+			}
 		}
 	}
 
@@ -441,39 +452,15 @@ container.addEventListener('click', function (evt) {
 	if (state == 0) {
 		if (mouseDownCount < 10) {
 			checkPicClick( INTERSECTED.id );
+			removeInstruction(0);
 			removeInstruction(1);
+			bFirstTimeClickInstruction = false;
 		}
 	}
 	else if (state == 1) {
 		manageSelectedPhotoClick( evt.clientX, evt.clientY );
 
-		if (evt.clientX > w / 2 + imageSize / 3 && evt.clientX < w / 2 + outerBoundary) {
-			if (bIsFront) {
-				rotateImage(1);
-				bIsFront = false;
 
-				removeRightArrow();
-
-				addTextContainer();
-				addTextbox();
-				createNotes(photoLinks[selectedImage]['link']);
-
-				addInstruction(2);
-			}
-		}
-
-		if (evt.clientX < w / 2 - imageSize / 3 && evt.clientX > w / 2 - outerBoundary) {
-			if (!bIsFront) {
-				rotateImage(0);
-				bIsFront = true;
-
-				removeLeftArrow();
-
-				removeTextContainer();
-				clearNotes();
-				textbox.value = "";
-			}
-		}
 	}
 }, false);
 
@@ -510,10 +497,13 @@ function checkPicClick( id ) {
 			selectedImagePos.set(planeList[i].position.x, planeList[i].position.y, planeList[i].position.z);
 
 			//Set the position of the plane so that it's right in front of the camera
-			planeList[i].position.set(camera.position.x, camera.position.y, camera.position.z - 800);
-			planeList[i].rotation.set(0,0,0);
+			//planeList[i].position.set(camera.position.x, camera.position.y, camera.position.z - 800);
+			//planeList[i].rotation.set(0,0,0);
+
+			bMoveToFront = true;
 
 			//Let's also set the position of the meta plane so that we can see it later.
+			//We don't need to animate this, as it's invisible.
 			metaPlane.position.set(camera.position.x, camera.position.y, camera.position.z - 800);
 
 			//Set the position of the text on the back on the photo
@@ -589,11 +579,15 @@ function manageSelectedPhotoClick(x, y) {
 		clickedLight.intensity = 0.0;	
 
 		//Set plane back to original position and rotation
-		planeList[selectedImage].position.set(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z);
-		planeList[selectedImage].rotation.set(0, 0, Math.random() * (Math.PI / 2) - (Math.PI/4));
+		//planeList[selectedImage].position.set(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z);
+		//planeList[selectedImage].rotation.set(0, 0, Math.random() * (Math.PI / 2) - (Math.PI/4));
+		planeList[selectedImage].rotation.x = 0;
+		planeList[selectedImage].rotation.y = 0;
+		bMoveToFront = true;
+		putBackRotation = Math.random() * (Math.PI / 2) - (Math.PI/4);
 
 		//Set selectedImage back to a non-number
-		selectImage = -1; 
+		//selectedImage = -1; 
 
 		//Remove textbox and clear out the notes HTML for next picture.
 		removeTextContainer();
@@ -602,6 +596,63 @@ function manageSelectedPhotoClick(x, y) {
 
 		//Set our boolean to its "front" state, because when we first click it always faces front.
 		bIsFront = true;
+
+		//Remove our "leave notes" instruction box if we click outside
+		removeInstruction(2);
+	}
+
+	if (x > w / 2 + imageSize / 3 && x < w / 2 + outerBoundary) {
+		if (bIsFront) {
+			rotateImage(1);
+			bIsFront = false;
+
+			addTextContainer();
+			addTextbox();
+			createNotes(photoLinks[selectedImage]['link']);
+
+			if (bFirstTimeNoteInstruction) {
+				addInstruction(2);
+				bFirstTimeNoteInstruction = false;
+			}
+		}
+
+		else {
+			rotateImage(0);
+			bIsFront = true;
+
+			removeTextContainer();
+			clearNotes();
+			textbox.value = "";
+
+			removeInstruction(2);
+		}
+	}
+
+	if (x < w / 2 - imageSize / 3 && x > w / 2 - outerBoundary) {
+		if (bIsFront) {
+			rotateImage(1);
+			bIsFront = false;
+
+			addTextContainer();
+			addTextbox();
+			createNotes(photoLinks[selectedImage]['link']);
+
+			if (bFirstTimeNoteInstruction) {
+				addInstruction(2);
+				bFirstTimeNoteInstruction = false;
+			}
+		}
+
+		else {
+			rotateImage(0);
+			bIsFront = true;
+
+			removeTextContainer();
+			clearNotes();
+			textbox.value = "";
+
+			removeInstruction(2);
+		}
 	}
 }
 
@@ -622,6 +673,28 @@ function moveCamera(x, y) {
 	}
 	else if (y > h - h * boundaryPct) {
 		camSpeedY = map_range(disY, h * boundaryPct, h/2, 0, -panMaxSpeed);
+	}
+}
+
+function checkCameraBoundary() {
+	if (camera.position.x > horizBoundary - w / 2) {
+		camSpeedX = 0;
+		camera.position.x = horizBoundary - w / 2;
+	}
+
+	if (camera.position.x < -horizBoundary + w / 2) {
+		camSpeedX = 0;
+		camera.position.x = -horizBoundary + w / 2;
+	}
+	
+	if (camera.position.y > vertBoundary - h / 2) {
+		camSpeedY = 0;
+		camera.position.y = vertBoundary - h / 2;
+	}
+
+	if (camera.position.y < -vertBoundary + h / 2) {
+		camSpeedY = 0;
+		camera.position.y = -vertBoundary + h / 2;
 	}
 }
 
@@ -806,6 +879,123 @@ function rotateImage( direction ) {
 	}
 }
 
+function tiltImage() {
+	if(bIsFront) {
+		if (mouse.x > w / 2 + imageSize / 3 && mouse.x < w / 2 + outerBoundary) {
+			if (planeList[selectedImage].rotation.y < Math.PI / 12) {
+				planeList[selectedImage].rotation.y += 0.1;
+				metaPlane.rotation.y += 0.1;
+				metaData_name.rotation.y += 0.1;
+				metaData_date.rotation.y += 0.1;
+				metaData_caption.rotation.y += 0.1;
+			}
+
+			addRotateCursor();
+		}
+		else if (mouse.x < w / 2 - imageSize / 3 && mouse.x > w / 2 - outerBoundary) {
+			if (planeList[selectedImage].rotation.y > -Math.PI / 12) {
+				planeList[selectedImage].rotation.y -= 0.1;
+				metaPlane.rotation.y -= 0.1;
+				metaData_name.rotation.y -= 0.1;
+				metaData_date.rotation.y -= 0.1;
+				metaData_caption.rotation.y -= 0.1;
+			}
+
+			addRotateCursor();
+		}
+
+		else {
+			if (planeList[selectedImage].rotation.y > 0.1) {
+				planeList[selectedImage].rotation.y -= 0.1;
+				metaPlane.rotation.y -= 0.1;
+				metaData_name.rotation.y -= 0.1;
+				metaData_date.rotation.y -= 0.1;
+				metaData_caption.rotation.y -= 0.1;
+			}
+			else if (planeList[selectedImage].rotation.y < 0.0) {
+				planeList[selectedImage].rotation.y += 0.1;
+				metaPlane.rotation.y += 0.1;
+				metaData_name.rotation.y += 0.1;
+				metaData_date.rotation.y += 0.1;
+				metaData_caption.rotation.y += 0.1;
+			}
+			addAutoCursor();
+		}
+	}
+	else {
+		if (mouse.x > w / 2 + imageSize / 2 && mouse.x < w / 2 + outerBoundary && !bTextboxActive) {
+			removeNotes();
+			hideTextbox();
+
+			if (planeList[selectedImage].rotation.y < Math.PI + Math.PI / 12) {
+				planeList[selectedImage].rotation.y += 0.1;
+				metaPlane.rotation.y += 0.1;
+				metaData_name.rotation.y += 0.1;
+				metaData_date.rotation.y += 0.1;
+				metaData_caption.rotation.y += 0.1;
+			}
+
+			addRotateCursor();
+		}
+
+		else if (mouse.x < w / 2 - imageSize / 2 && mouse.x > w / 2 - outerBoundary && !bTextboxActive) {
+			removeNotes();
+			hideTextbox();
+
+			if (planeList[selectedImage].rotation.y > Math.PI - Math.PI / 12) {
+				planeList[selectedImage].rotation.y -= 0.1;
+				metaPlane.rotation.y -= 0.1;
+				metaData_name.rotation.y -= 0.1;
+				metaData_date.rotation.y -= 0.1;
+				metaData_caption.rotation.y -= 0.1;
+			}
+
+			addRotateCursor();
+		}
+		else {
+			if (planeList[selectedImage].rotation.y > Math.PI) {
+				planeList[selectedImage].rotation.y -= 0.1;
+				metaPlane.rotation.y -= 0.1;
+				metaData_name.rotation.y -= 0.1;
+				metaData_date.rotation.y -= 0.1;
+				metaData_caption.rotation.y -= 0.1;
+			}
+
+			else if (planeList[selectedImage].rotation.y < Math.PI) {
+				planeList[selectedImage].rotation.y += 0.1;
+				metaPlane.rotation.y += 0.1;
+				metaData_name.rotation.y += 0.1;
+				metaData_date.rotation.y += 0.1;
+				metaData_caption.rotation.y += 0.1;
+			}
+
+			addAutoCursor();
+			addNotes();
+			showTextbox();
+		}
+	}
+}
+
+function animateToFront( destX, destY, destZ, rotateZ) {
+	var d = lineLength(planeList[selectedImage].position.x, planeList[selectedImage].position.y, destX, destY );
+
+	if (d > 0.01 && bMoveToFront) {
+		//Change the position of our selected photo ( destination is camera position )
+		planeList[selectedImage].position.x = moveSpeed * destX + (1 - moveSpeed) * planeList[selectedImage].position.x;
+		planeList[selectedImage].position.y = moveSpeed * destY + (1 - moveSpeed) * planeList[selectedImage].position.y;
+		planeList[selectedImage].position.z = moveSpeed * destZ + (1 - moveSpeed) * planeList[selectedImage].position.z;
+
+		//Change the rotation of our selected photo ( destination is 0 rotation in all axes )
+		planeList[selectedImage].rotation.z = moveSpeed * rotateZ + (1 - moveSpeed) * planeList[selectedImage].rotation.z;
+	}
+
+
+	else {
+		bMoveToFront = false;
+	}
+
+}
+
 
 
 /***************************************************************************************************************/
@@ -817,7 +1007,7 @@ function rotateImage( direction ) {
 //+ Jonas Raoni Soares Silva
 //@ http://jsfromhell.com/math/line-length [rev. #1]
 //DISTANCE FUNCTION
-lineLength = function(x, y, x0, y0){
+function lineLength(x, y, x0, y0){
     return Math.sqrt((x -= x0) * x + (y -= y0) * y);
 };
 
@@ -877,41 +1067,8 @@ function animate(t) {
 	/***************************************STATE ZERO**************************************/
 	/***************************************************************************************/
 	if (state == 0) {
-
-		// if (prevCamX != camera.position.x || prevCamY != camera.position.y) {
-		// 	prevCamX = camera.position.x;
-		// 	prevCamY = camera.position.y;
-		// 	prevCamZ = camera.position.z;
-
-		// 	planeAmountScale = map_range(camera.position.z, 1000, 4500, 1, 10);
-
-		// 	for (var i = 0; i < planeAmountScale; i++) {
-		// 		addPlane();	
-		// 	}
-			
-		// 	checkPlaneDistance();
-		// }
-
 		//Check to see if the camera has gone out of the boundary
-		if (camera.position.x > horizBoundary - w / 2) {
-			camSpeedX = 0;
-			camera.position.x = horizBoundary - w / 2;
-		}
-
-		if (camera.position.x < -horizBoundary + w / 2) {
-			camSpeedX = 0;
-			camera.position.x = -horizBoundary + w / 2;
-		}
-		
-		if (camera.position.y > vertBoundary - h / 2) {
-			camSpeedY = 0;
-			camera.position.y = vertBoundary - h / 2;
-		}
-
-		if (camera.position.y < -vertBoundary + h / 2) {
-			camSpeedY = 0;
-			camera.position.y = -vertBoundary + h / 2;
-		}
+		checkCameraBoundary();
 
 		camera.position.x += camSpeedX;
 		camera.position.y += camSpeedY;
@@ -929,8 +1086,6 @@ function animate(t) {
 			camSpeedY = 0;
 		}
 
-		//console.log("UP" + userPosition.style.left + " | " + userPosition.style.top);
-
 		var angle = map_range(camera.position.z, 1000, 4500, Math.PI/8, Math.PI/40);
 		var exponent = map_range(camera.position.z, 1000, 4500, 75.0, 500.0);
 		light.angle = angle;
@@ -943,6 +1098,10 @@ function animate(t) {
 		light.target = lookAtThis;
 
 		//controls.update();
+
+		if (selectedImage != -1) {
+			animateToFront(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z, putBackRotation);
+		}
 
 		setProjection();
 
@@ -971,6 +1130,7 @@ function animate(t) {
 		lookAtThis.position.x = directionVector.x - SCREEN_WIDTH / 2 + lightOffsetX;
 		lookAtThis.position.y = directionVector.y + SCREEN_HEIGHT / 2 + lightOffsetY;
 		lookAtThis.position.z = directionVector.z - 1000;
+
 	}
 
 	/***************************************************************************************/
@@ -979,73 +1139,11 @@ function animate(t) {
 	else if (state == 1) {
 		lookAtThis.position.set(camera.position.x, camera.position.y, camera.position.z - 1000);
 
+		animateToFront( camera.position.x, camera.position.y, camera.position.z - 800, 0);
+
 		checkTextbox();
 
-		//Check to see if we need to rotate the image plane
-		// if ( mouse.x < w / 2 - imageSize / 3) {
-		// 	rotateImage(0);
-		// }
-		// else if ( mouse.x > w / 2 + imageSize / 3) {
-		// 	rotateImage(1);
-		// }
-		// else if ( mouse.x < w / 2) {
-		// 	rotateImage(2);
-		// }
-		// else if ( mouse.x > w / 2 ) {
-		// 	rotateImage(3);
-		// }
-		// else {
-		// 	rotateImage(4);
-		// }
-
-		if(bIsFront) {
-			if (mouse.x > w / 2 + imageSize / 3 && mouse.x < w / 2 + outerBoundary) {
-				if (planeList[selectedImage].rotation.y < Math.PI / 12) {
-					planeList[selectedImage].rotation.y += 0.1;
-					metaPlane.rotation.y += 0.1;
-					metaData_name.rotation.y += 0.1;
-					metaData_date.rotation.y += 0.1;
-					metaData_caption.rotation.y += 0.1;
-				}
-
-				addRightArrow();
-			}
-			else {
-				if (planeList[selectedImage].rotation.y > 0.1) {
-					planeList[selectedImage].rotation.y -= 0.1;
-					metaPlane.rotation.y -= 0.1;
-					metaData_name.rotation.y -= 0.1;
-					metaData_date.rotation.y -= 0.1;
-					metaData_caption.rotation.y -= 0.1;
-				}
-
-				removeRightArrow();
-			}
-		}
-		else {
-			if (mouse.x < w / 2 - imageSize / 3 && mouse.x > w / 2 - outerBoundary && !bTextboxActive) {
-				if (planeList[selectedImage].rotation.y > Math.PI - Math.PI / 12) {
-					planeList[selectedImage].rotation.y -= 0.1;
-					metaPlane.rotation.y -= 0.1;
-					metaData_name.rotation.y -= 0.1;
-					metaData_date.rotation.y -= 0.1;
-					metaData_caption.rotation.y -= 0.1;
-				}
-
-				addLeftArrow();
-			}
-			else {
-				if (planeList[selectedImage].rotation.y < Math.PI) {
-					planeList[selectedImage].rotation.y += 0.1;
-					metaPlane.rotation.y += 0.1;
-					metaData_name.rotation.y += 0.1;
-					metaData_date.rotation.y += 0.1;
-					metaData_caption.rotation.y += 0.1;
-				}
-
-				removeLeftArrow();
-			}
-		}
+		tiltImage();
 	}
 
 	window.requestAnimationFrame(animate, renderer.domElement);

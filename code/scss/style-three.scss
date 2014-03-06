@@ -42,19 +42,20 @@ body {
 }
 
 .notes-visible {
-    opacity: 0.9;
-    transition: opacity 0.2s;
+    opacity: 0.8;
+    transition: opacity 0.1s;
 }
 
 .notes-hidden {
     opacity: 0.0;
-    transition: opacity 0.2s;
+    transition: opacity 0.1s;
 }
 
 #textbox {
     position: relative;
     width: 100%;
     margin: 1% 0;
+    padding: 10% 3% 0 3%;
     font-family: "Font", serif;
     font-size: 1.2rem;
     color: #1C1A15;
@@ -64,6 +65,38 @@ body {
     resize: none;
 }
 
+#textbox:hover {
+    cursor: url("../img/write_cursor.gif"), auto;
+}
+
+::-webkit-input-placeholder {
+    -webkit-animation: color-change 2s infinite;
+    animation: color-change 2s infinite;
+    border-bottom: 1px dotted #5E5746;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+    -moz-animation: color-change 2s infinite;
+    animation: color-change 2s infinite;
+    border-bottom: 1px dotted #38342A;
+}
+
+@-webkit-keyframes color-change {
+    0% { color: #1C1A15; opacity: 0.6; }
+    50% { color: #38342A; opacity: 1.0; }
+    100% { color: #1C1A15; opacity: 0.6; }
+}
+@-moz-keyframes color-change {
+    0% { color: #1C1A15; opacity: 0.6; }
+    50% { color: #38342A; opacity: 1.0; }
+    100% { color: #1C1A15; opacity: 0.6; }
+}
+@keyframes color-change {
+    0% { color: #1C1A15; opacity: 0.6; }
+    50% { color: #38342A; opacity: 1.0; }
+    100% { color: #1C1A15; opacity: 0.6; }
+}
+
 .textcontainer-visible {
     width: 250px;
     height: 100%;
@@ -71,9 +104,6 @@ body {
     position: absolute;
     top: 53%;
     left: 33%;
-
-    /*border: none;
-    resize: none;*/
 }
 
 .textcontainer-hidden {
@@ -83,11 +113,24 @@ body {
 }
 
 .textbox-visible {
+    opacity: 1.0;
+    transition: opacity 0.1s;
+
+}
+
+.textbox-hidden {
+    opacity: 0.0;
+    transition: opacity 0.1s;
+
+}
+
+.textbox-close {
+    position: relative;
     top: 0px;
     left: 0px;
 }
 
-.textbox-hidden {
+.textbox-far {
     position: absolute;
     top: -9999px;
     left: -9999px;
@@ -102,10 +145,15 @@ body {
 }
 
 .instruction-visible {
-    bottom: 7%;
+    bottom: 8%;
     left: 0%;
     opacity: 0.6;
     transition: opacity 1.0s;
+
+    cursor: default;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
 }
 
 .instruction-hidden {
@@ -141,4 +189,16 @@ body {
 .arrow-right-hidden {
     opacity: 0.0;
     transition: opacity 0.2s;
+}
+
+.cursor-rotate {
+    cursor: url("../img/rotate_cursor.gif"), auto;
+}
+
+.cursor-write {
+    cursor: url("../img/write_cursor.gif"), auto;
+}
+
+.cursor-auto {
+    cursor: auto;
 }

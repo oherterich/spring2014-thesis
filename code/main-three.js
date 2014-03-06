@@ -1,3 +1,4 @@
+var body = document.getElementsByTagName("body")[0];
 var container = document.getElementById("container");
 var photoLinks;
 var commentList;
@@ -52,17 +53,26 @@ function removeTextContainer() {
 }
 
 function addTextbox() {
-    textbox.classList.add("textbox-visible");
-    textbox.classList.remove("textbox-hidden");
-    // submit.classList.add("textbox-visible");
-    // submit.classList.remove("textbox-hidden");
+    textbox.classList.add("textbox-close");
+    textbox.classList.remove("textbox-far");
+    console.log("fuck it");
 }
 
 function removeTextbox() {
+    textbox.classList.add("textbox-far");
+    textbox.classList.remove("textbox-close");
+}
+
+function showTextbox() {
+    textbox.classList.add("textbox-visible");
+    textbox.classList.remove("textbox-hidden");
+
+}
+
+function hideTextbox() {
     textbox.classList.add("textbox-hidden");
     textbox.classList.remove("textbox-visible");
-    // submit.classList.add("textbox-hidden");
-    // submit.classList.remove("textbox-visible");
+    console.log("goddamit");
 }
 
 function addLeftArrow() {
@@ -93,6 +103,25 @@ function addInstruction( index ) {
 function removeInstruction( index ) {
     instruction[index].classList.add("instruction-hidden");
     instruction[index].classList.remove("instruction-visible");
+}
+
+function addRotateCursor() {
+    body.classList.add("cursor-rotate");
+    body.classList.remove("cursor-auto");
+    body.classList.remove("cursor-write");
+}
+
+
+function addWriteCursor() {
+    body.classList.add("cursor-write");
+    body.classList.remove("cursor-auto");
+    body.classList.remove("cursor-rotate");
+}
+
+function addAutoCursor() {
+    body.classList.add("cursor-auto");
+    body.classList.remove("cursor-rotate");
+    body.classList.remove("cursor-write");
 }
 
 function addNotes() {
@@ -160,7 +189,7 @@ textbox.addEventListener('keydown', function(evt) {
         saveComment( userComment, userid );
         removeTextbox();
         textbox.blur();
-        console.log(document.activeElement.nodeName);
+        removeInstruction(2);
     }
 });
 
@@ -193,15 +222,12 @@ userPosition.addEventListener('mouseout', function(evt) {
 userPosition.addEventListener('mousedown', function(evt) {
     bHUDDraggable = true;
     evt.preventDefault();
-    console.log("mousedown");
 });
 
 userPosition.addEventListener('mouseup', function(evt) {
     bHUDDraggable = false;
-    console.log("mouseup");
 });
 
 userPosition.addEventListener('click', function(evt) {
     bHUDDraggable = false;
-    console.log("click");
 });
