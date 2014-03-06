@@ -142,7 +142,7 @@ scene.add(clickedLight);
 
 //Big light to illuminate space (for testing purposes)
 var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.0);
-scene.add(hemiLight);
+//scene.add(hemiLight);
 
 //Add something for the light to look at
 var lookAtThisGeom = new THREE.Geometry(100, 100, 10, 10);
@@ -704,13 +704,36 @@ function setProjection() {
 	// ranging from -1 to 1, where
 	//      x == -1 && y == -1 means top-left, and
 	//      x ==  1 && y ==  1 means bottom right
-	var x = ( moveInfo.x / SCREEN_WIDTH ) * SCREEN_WIDTH / 2 - 1;
-	var y = -( moveInfo.y / SCREEN_HEIGHT ) * SCREEN_HEIGHT / 2 + 1;
+	// var x = ( moveInfo.x / SCREEN_WIDTH ) * SCREEN_WIDTH / 2 - 1;
+	// var y = -( moveInfo.y / SCREEN_HEIGHT ) * SCREEN_HEIGHT / 2 + 1;
 
 	// Now we set our direction vector to those initial values
-	directionVector.set(x, y, 0.5);
+	//directionVector.set(x, y, 0.5);
 
-	projector.unprojectVector( directionVector, camera );
+	//For some reason, the following code accurately sets the position of the mouse in 3D space.
+	//I don't really know how projection vectors work, so I'm just gonna go with it.
+	//directionVector.set(pickMouse.x, pickMouse.y, 1.0);
+
+	//projector.unprojectVector( directionVector, camera );
+
+	var vector = new THREE.Vector3(
+    ( mouse.x / window.innerWidth ) * 2 - 1,
+    - ( mouse.y / window.innerHeight ) * 2 + 1,
+    0.5 );
+
+	projector.unprojectVector( vector, camera );
+
+	var dir = vector.sub( camera.position ).normalize();
+
+	var distance = - camera.position.z / dir.z;
+
+	var pos = camera.position.clone().add( dir.multiplyScalar( distance ) );
+
+	directionVector.x = pos.x;
+	directionVector.y = pos.y;
+	directionVector.z = pos.z;
+
+	console.log(pos);
 }
 
 //This function allows us to select images without picking the ones underneath
@@ -1070,6 +1093,8 @@ function animate(t) {
 		//Check to see if the camera has gone out of the boundary
 		checkCameraBoundary();
 
+		setProjection();
+
 		camera.position.x += camSpeedX;
 		camera.position.y += camSpeedY;
 
@@ -1103,8 +1128,6 @@ function animate(t) {
 			animateToFront(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z, putBackRotation);
 		}
 
-		setProjection();
-
 		if (mouseDown) {
 			slideImages(); //Function to drag images.
 
@@ -1127,9 +1150,13 @@ function animate(t) {
 		prevLookAtThis.y = lookAtThis.position.y;
 		prevLookAtThis.z = lookAtThis.position.z;
 
-		lookAtThis.position.x = directionVector.x - SCREEN_WIDTH / 2 + lightOffsetX;
-		lookAtThis.position.y = directionVector.y + SCREEN_HEIGHT / 2 + lightOffsetY;
-		lookAtThis.position.z = directionVector.z - 1000;
+		// lookAtThis.position.x = directionVector.x - SCREEN_WIDTH / 2 + lightOffsetX;
+		// lookAtThis.position.y = directionVector.y + SCREEN_HEIGHT / 2 + lightOffsetY;
+		// lookAtThis.position.z = directionVector.z - 1000;
+
+		lookAtThis.position.x = directionVector.x;
+		lookAtThis.position.y = directionVector.y;
+		lookAtThis.position.z = directionVector.z;
 
 	}
 
