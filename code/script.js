@@ -255,8 +255,6 @@ window.onload = function() { //THIS FUNCTION WRAPS AROUND THE REST OF THE CODE. 
 var planeGenerateScale = 350;
 var planeRemoveScale = 1000;
 var planeAmountScale = 1;
-var lightOffsetX = -120;
-var lightOffsetY = -120;
 var changeTextureScale = 1200;
 var prevMouseX = 0;
 var prevMouseY = 0;
@@ -1143,16 +1141,9 @@ function animate(t) {
 			mouseDownCount++;
 		}
 
-		lightOffsetX = map_range(moveInfo.x, 0, w, -120, -570);
-		lightOffsetY = map_range(moveInfo.y, 0, h, 80, -200);
-
 		prevLookAtThis.x = lookAtThis.position.x;
 		prevLookAtThis.y = lookAtThis.position.y;
 		prevLookAtThis.z = lookAtThis.position.z;
-
-		// lookAtThis.position.x = directionVector.x - SCREEN_WIDTH / 2 + lightOffsetX;
-		// lookAtThis.position.y = directionVector.y + SCREEN_HEIGHT / 2 + lightOffsetY;
-		// lookAtThis.position.z = directionVector.z - 1000;
 
 		lookAtThis.position.x = directionVector.x;
 		lookAtThis.position.y = directionVector.y;
