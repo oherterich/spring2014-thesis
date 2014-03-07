@@ -11,6 +11,7 @@ var state = 0;
 
 //Determines size of images (planes)
 var imageSize = 500;
+var maxZDepth = 1.0;
 
 //Determine boundary percentage for moving camera
 var boundaryPct = 0.25;
@@ -146,7 +147,7 @@ scene.add(clickedLight);
 
 //Big light to illuminate space (for testing purposes)
 var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.0);
-//scene.add(hemiLight);
+scene.add(hemiLight);
 
 //Add something for the light to look at
 var lookAtThisGeom = new THREE.Geometry(100, 100, 10, 10);
@@ -263,7 +264,6 @@ var changeTextureScale = 1200;
 var prevMouseX = 0;
 var prevMouseY = 0;
 
-
 // INITIALIZE GROUND PLANES
 var planeList = [];
 
@@ -271,7 +271,7 @@ for (var i = 0; i < photoLinks.length; i++) {
 //for (var i = 0; i < 10; i++) {
 	var x = Math.random() * 4000 - 2000;
 	var y = Math.random() * 4000 - 2000;
-	var z = Math.random() * 100;
+	var z = Math.random() * maxZDepth;
 
 	var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
 	//var w = Math.random() * 10;
@@ -586,6 +586,7 @@ function manageSelectedPhotoClick(x, y) {
 		planeList[selectedImage].rotation.y = 0;
 		bMoveToFront = true;
 		putBackRotation = Math.random() * (Math.PI / 2) - (Math.PI/4);
+		maxZDepth += 0.1;
 
 		//Set selectedImage back to a non-number
 		//selectedImage = -1; 
@@ -812,7 +813,7 @@ function setHUD() {
 }
 
 function dragHUD() {
-	var horiz = map_range(mouse.x, w-256-26, w, 0, 256) - 26;
+	var horiz = map_range(mouse.x, w-256-26, w-26, 0, 256) - 26;
 	var vert = map_range(mouse.y, h-160-16, h, 0, 160) - 16;
 
 	userPosition.style.left = horiz + "px";
@@ -1115,7 +1116,7 @@ function animate(t) {
 		//controls.update();
 
 		if (selectedImage != -1) {
-			animateToFront(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z, putBackRotation);
+			animateToFront(selectedImagePos.x, selectedImagePos.y, maxZDepth, putBackRotation);
 			animateLight( light, 0.1, 1.0 );
 			animateLight( clickedLight, 0.1, 0.0 );
 		}
