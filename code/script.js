@@ -53,6 +53,8 @@ var bFadeLight = false;
 var bRotatePic = false;
 var rotateSpeed = 0.3;
 var whichRotate = -1;
+var damping = new THREE.Vector3( 0.75, 0.75, 0.75);
+var maxSpeed = new THREE.Vector3(10.0, 10.0, 0);
 
 //Booleans to allow us to drag around our HUD
 var bHUDActive = false;
@@ -264,8 +266,15 @@ var changeTextureScale = 1200;
 var prevMouseX = 0;
 var prevMouseY = 0;
 
+
+function Plane( pic, vel, acc ) {
+	this.pic = pic;
+	this.vel = vel;
+	this.acc = acc;
+}
+
 // INITIALIZE GROUND PLANES
-var planeList = [];
+var planeList = new Array();
 
 for (var i = 0; i < photoLinks.length; i++) {
 //for (var i = 0; i < 10; i++) {
@@ -301,12 +310,16 @@ for (var i = 0; i < photoLinks.length; i++) {
 	// plane.castShadow = true;
 	// plane.receiveShadow = true;
 
-	planeList.push( plane );
+	var vel = new THREE.Vector3( 0, 0, 0 );
+	var acc = new THREE.Vector3( 0, 0, 0 );
+
+	planeList.push( new Plane( plane, vel, acc ) );
 }
 
 for (var i = 0; i < planeList.length; i++) {
-	scene.add(planeList[i]);
+	scene.add(planeList[i].pic);
 }
+	console.log(planeList);
 
 
 //CREATE INITIAL BACKGROUND TEXTURE PLANE
@@ -319,57 +332,57 @@ scene.add( backgroundTexture );
 
 
 //This function adds a plane to the scene based where the camera and mouse is located.
-function addPlane() {
+// function addPlane() {
 
-	planeGenerateScale = map_range(camera.position.z, 1000, 4500, 500, 2000);
+// 	planeGenerateScale = map_range(camera.position.z, 1000, 4500, 500, 2000);
 
-	var x = lookAtThis.position.x;
-	var y = lookAtThis.position.y;
+// 	var x = lookAtThis.position.x;
+// 	var y = lookAtThis.position.y;
 
-	while (lineLength(lookAtThis.position.x, lookAtThis.position.y, x, y) < planeGenerateScale) {
+// 	while (lineLength(lookAtThis.position.x, lookAtThis.position.y, x, y) < planeGenerateScale) {
 
-		x = camera.position.x + Math.cos(Math.random() * Math.PI * 2) * planeGenerateScale;
-		y = camera.position.y + Math.sin(Math.random() * Math.PI * 2) * planeGenerateScale;
+// 		x = camera.position.x + Math.cos(Math.random() * Math.PI * 2) * planeGenerateScale;
+// 		y = camera.position.y + Math.sin(Math.random() * Math.PI * 2) * planeGenerateScale;
 
-	}
+// 	}
 
-	var z = Math.random() * 10;
+// 	var z = Math.random() * 10;
 
-	var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
+// 	var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
 
-	var planeGeo = new THREE.PlaneGeometry(imageSize, imageSize, 10, 10);
-	var planeMat = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
+// 	var planeGeo = new THREE.PlaneGeometry(imageSize, imageSize, 10, 10);
+// 	var planeMat = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
 	
-	var rand = Math.floor(Math.random() * photoLinks.length);
-	var texture = THREE.ImageUtils.loadTexture("instagram_img/" + photoLinks[rand]['link'] + ".jpg");
-	var rand2 = Math.floor(Math.random() * 5);
-	var rough = THREE.ImageUtils.loadTexture("instagram_img/texture_" + rand2 + ".jpg");
-	var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: rough, bumpScale: 5 });
+// 	var rand = Math.floor(Math.random() * photoLinks.length);
+// 	var texture = THREE.ImageUtils.loadTexture("instagram_img/" + photoLinks[rand]['link'] + ".jpg");
+// 	var rand2 = Math.floor(Math.random() * 5);
+// 	var rough = THREE.ImageUtils.loadTexture("instagram_img/texture_" + rand2 + ".jpg");
+// 	var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: rough, bumpScale: 5 });
 
-	// var c = new THREE.Color( 0xFFFFFF );
-	// c.setRGB( Math.random(), Math.random(), Math.random() );
-	// var material = new THREE.MeshLambertMaterial({ color: c });
+// 	// var c = new THREE.Color( 0xFFFFFF );
+// 	// c.setRGB( Math.random(), Math.random(), Math.random() );
+// 	// var material = new THREE.MeshLambertMaterial({ color: c });
 
-	var plane = new THREE.Mesh(planeGeo, material);
+// 	var plane = new THREE.Mesh(planeGeo, material);
 
-	plane.position.x = x;
-	plane.position.y = y;
-	plane.position.z = z;
+// 	plane.position.x = x;
+// 	plane.position.y = y;
+// 	plane.position.z = z;
 
-	plane.rotation.z = rot;
+// 	plane.rotation.z = rot;
 
-	planeList.push( plane );
-	scene.add( planeList[planeList.length - 1])
-}
+// 	planeList.push( plane );
+// 	scene.add( planeList[planeList.length - 1])
+// }
 
 //This function is used to remove planes that are too far away to see, removing unnecessary rendering.
 function checkPlaneDistance() {
 	planeRemoveScale = map_range(camera.position.z, 1000, 4500, 1000, 3000);
 
 	for (var i = 0; i < planeList.length; i++) {
-		var d = lineLength(planeList[i].position.x, planeList[i].position.y, camera.position.x, camera.position.y);
+		var d = lineLength(planeList[i].pic.position.x, planeList[i].pic.position.y, camera.position.x, camera.position.y);
 		if (d > planeRemoveScale) {
-			scene.remove( planeList[i] );
+			scene.remove( planeList[i].pic );
 			planeList.splice(i,1);
 		}
 	}
@@ -384,15 +397,15 @@ function changeTexture() {
   	
 		changeTextureScale = map_range(camera.position.z, 1000, 4500, 1200, 1400);
 		for (var i = 0; i < planeList.length; i++) {
-			var d = lineLength(planeList[i].position.x, planeList[i].position.y, lookAtThis.position.x, lookAtThis.position.y);
+			var d = lineLength(planeList[i].pic.position.x, planeList[i].pic.position.y, lookAtThis.position.x, lookAtThis.position.y);
 			if (d < changeTextureScale && d > changeTextureScale / 2) {
-				// planeList[i].material.color.r = Math.random();
-				// planeList[i].material.color.g = Math.random();
-				// planeList[i].material.color.b = Math.random();
+				// planeList[i].pic.material.color.r = Math.random();
+				// planeList[i].pic.material.color.g = Math.random();
+				// planeList[i].pic.material.color.b = Math.random();
 
 				var rand = Math.floor(Math.random() * 31);
 				var texture = THREE.ImageUtils.loadTexture("img/instagram_" + rand + ".jpg");
-				planeList[i].material.map = texture;
+				planeList[i].pic.material.map = texture;
 			}
 		}
 	}
@@ -490,14 +503,14 @@ container.addEventListener("mouseup", function (evt) {
 
 function checkPicClick( id ) {
 	for (var i = 0; i < planeList.length; i++) {
-		if ( planeList[i].id == id) {
+		if ( planeList[i].pic.id == id) {
 			//If we have a match, make that image our "selected" image
 			selectedImage = i;
-			selectedImagePos.set(planeList[i].position.x, planeList[i].position.y, planeList[i].position.z);
+			selectedImagePos.set(planeList[i].pic.position.x, planeList[i].pic.position.y, planeList[i].pic.position.z);
 
 			//Set the position of the plane so that it's right in front of the camera
-			//planeList[i].position.set(camera.position.x, camera.position.y, camera.position.z - 800);
-			//planeList[i].rotation.set(0,0,0);
+			//planeList[i].pic.position.set(camera.position.x, camera.position.y, camera.position.z - 800);
+			//planeList[i].pic.rotation.set(0,0,0);
 
 			bMoveToFront = true;
 
@@ -522,7 +535,7 @@ function checkPicClick( id ) {
 			clickedLight.target = lookAtThis;
 
 			//In order to render the new light, we must update the material
-			planeList[i].material.needsUpdate = true;
+			planeList[i].pic.material.needsUpdate = true;
 
 			//Change to the looking at image state.
 			state = 1;
@@ -564,7 +577,7 @@ function checkPicClick( id ) {
 
 function manageSelectedPhotoClick(x, y) {
 
-	if (x < w/2 - outerBoundary || x > w/2 + outerBoundary || y < h/2 - outerBoundary || y > h/2 + outerBoundary) {
+	if (x < w/2 - outerBoundary || x > w/2 + outerBoundary || y < h/2 - imageSize/2 || y > h/2 + imageSize/2) {
 		state = 0;
 
 		//Reset rotations
@@ -580,10 +593,10 @@ function manageSelectedPhotoClick(x, y) {
 		bFadeLight = true;
 
 		//Set plane back to original position and rotation
-		//planeList[selectedImage].position.set(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z);
-		//planeList[selectedImage].rotation.set(0, 0, Math.random() * (Math.PI / 2) - (Math.PI/4));
-		planeList[selectedImage].rotation.x = 0;
-		planeList[selectedImage].rotation.y = 0;
+		//planeList[selectedImage].pic.position.set(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z);
+		//planeList[selectedImage].pic.rotation.set(0, 0, Math.random() * (Math.PI / 2) - (Math.PI/4));
+		planeList[selectedImage].pic.rotation.x = 0;
+		planeList[selectedImage].pic.rotation.y = 0;
 		bMoveToFront = true;
 		putBackRotation = Math.random() * (Math.PI / 2) - (Math.PI/4);
 		maxZDepth += 0.1;
@@ -747,7 +760,7 @@ function pickImage() {
 	pickRaycaster.set( camera.position, vector.sub( camera.position ).normalize() );
 
 	//var intersects = pickRaycaster.intersectObjects( scene.children );
-	var intersects = pickRaycaster.intersectObjects( planeList );
+	var intersects = pickRaycaster.intersectObjects( scene.children );
 
 	if ( intersects.length > 0 ) {
 
@@ -774,9 +787,11 @@ function pickImage() {
 function slideImages() {
 	if (INTERSECTED != null) {
 		for (var i = 0; i < planeList.length; i++) {
-			if (planeList[i].id == INTERSECTED.id) {
-				planeList[i].position.x += lookAtThis.position.x - prevLookAtThis.x;
-				planeList[i].position.y += lookAtThis.position.y - prevLookAtThis.y;
+			if (planeList[i].pic.id == INTERSECTED.id) {
+				var diff = new THREE.Vector3( lookAtThis.position.x - prevLookAtThis.x, lookAtThis.position.y - prevLookAtThis.y );
+				planeList[i].pic.position.x += diff.x;
+				planeList[i].pic.position.y += diff.y;
+				planeList[i].vel = diff.divide( new THREE.Vector3(3,3,3));
 			}
 		}
 	}
@@ -784,9 +799,9 @@ function slideImages() {
 
 function setSelectedImage() {
 	for (var i = 0; i < planeList.length; i++) {
-		if ( planeList[i].id == INTERSECTED.id) {
+		if ( planeList[i].pic.id == INTERSECTED.id) {
 			selectedImage = i;
-			selectedImagePos.set(planeList[i].position.x, planeList[i].position.y, planeList[i].position.z);
+			selectedImagePos.set(planeList[i].pic.position.x, planeList[i].pic.position.y, planeList[i].pic.position.z);
 		}
 	}
 }
@@ -838,8 +853,8 @@ function checkTextbox() {
 function tiltImage() {
 	if(bIsFront) {
 		if (mouse.x > w / 2 + imageSize / 3 && mouse.x < w / 2 + outerBoundary) {
-			if (planeList[selectedImage].rotation.y < Math.PI / 12) {
-				planeList[selectedImage].rotation.y += 0.1;
+			if (planeList[selectedImage].pic.rotation.y < Math.PI / 12) {
+				planeList[selectedImage].pic.rotation.y += 0.1;
 				metaPlane.rotation.y += 0.1;
 				metaData_name.rotation.y += 0.1;
 				metaData_date.rotation.y += 0.1;
@@ -849,8 +864,8 @@ function tiltImage() {
 			addRotateCursor();
 		}
 		else if (mouse.x < w / 2 - imageSize / 3 && mouse.x > w / 2 - outerBoundary) {
-			if (planeList[selectedImage].rotation.y > -Math.PI / 12) {
-				planeList[selectedImage].rotation.y -= 0.1;
+			if (planeList[selectedImage].pic.rotation.y > -Math.PI / 12) {
+				planeList[selectedImage].pic.rotation.y -= 0.1;
 				metaPlane.rotation.y -= 0.1;
 				metaData_name.rotation.y -= 0.1;
 				metaData_date.rotation.y -= 0.1;
@@ -861,15 +876,15 @@ function tiltImage() {
 		}
 
 		else {
-			if (planeList[selectedImage].rotation.y > 0.1) {
-				planeList[selectedImage].rotation.y -= 0.1;
+			if (planeList[selectedImage].pic.rotation.y > 0.1) {
+				planeList[selectedImage].pic.rotation.y -= 0.1;
 				metaPlane.rotation.y -= 0.1;
 				metaData_name.rotation.y -= 0.1;
 				metaData_date.rotation.y -= 0.1;
 				metaData_caption.rotation.y -= 0.1;
 			}
-			else if (planeList[selectedImage].rotation.y < 0.0) {
-				planeList[selectedImage].rotation.y += 0.1;
+			else if (planeList[selectedImage].pic.rotation.y < 0.0) {
+				planeList[selectedImage].pic.rotation.y += 0.1;
 				metaPlane.rotation.y += 0.1;
 				metaData_name.rotation.y += 0.1;
 				metaData_date.rotation.y += 0.1;
@@ -885,15 +900,15 @@ function tiltImage() {
 			removeNotes();
 			hideTextbox();
 
-			if (planeList[selectedImage].rotation.y < Math.PI + Math.PI / 12 && planeList[selectedImage].rotation.y > 0) {
-				planeList[selectedImage].rotation.y += 0.1;
+			if (planeList[selectedImage].pic.rotation.y < Math.PI + Math.PI / 12 && planeList[selectedImage].pic.rotation.y > 0) {
+				planeList[selectedImage].pic.rotation.y += 0.1;
 				metaPlane.rotation.y += 0.1;
 				metaData_name.rotation.y += 0.1;
 				metaData_date.rotation.y += 0.1;
 				metaData_caption.rotation.y += 0.1;
 			}
-			else if ( planeList[selectedImage].rotation.y < -Math.PI + Math.PI/12 && planeList[selectedImage].rotation.y < 0 ) {
-				planeList[selectedImage].rotation.y += 0.1;
+			else if ( planeList[selectedImage].pic.rotation.y < -Math.PI + Math.PI/12 && planeList[selectedImage].pic.rotation.y < 0 ) {
+				planeList[selectedImage].pic.rotation.y += 0.1;
 				metaPlane.rotation.y += 0.1;
 				metaData_name.rotation.y += 0.1;
 				metaData_date.rotation.y += 0.1;
@@ -907,15 +922,15 @@ function tiltImage() {
 			removeNotes();
 			hideTextbox();
 
-			if (planeList[selectedImage].rotation.y > Math.PI - Math.PI / 12 && planeList[selectedImage].rotation.y > 0) {
-				planeList[selectedImage].rotation.y -= 0.1;
+			if (planeList[selectedImage].pic.rotation.y > Math.PI - Math.PI / 12 && planeList[selectedImage].pic.rotation.y > 0) {
+				planeList[selectedImage].pic.rotation.y -= 0.1;
 				metaPlane.rotation.y -= 0.1;
 				metaData_name.rotation.y -= 0.1;
 				metaData_date.rotation.y -= 0.1;
 				metaData_caption.rotation.y -= 0.1;
 			}
-			else if (planeList[selectedImage].rotation.y > -Math.PI - Math.PI/12 && planeList[selectedImage].rotation.y < 0) {
-				planeList[selectedImage].rotation.y -= 0.1;
+			else if (planeList[selectedImage].pic.rotation.y > -Math.PI - Math.PI/12 && planeList[selectedImage].pic.rotation.y < 0) {
+				planeList[selectedImage].pic.rotation.y -= 0.1;
 				metaPlane.rotation.y -= 0.1;
 				metaData_name.rotation.y -= 0.1;
 				metaData_date.rotation.y -= 0.1;
@@ -926,32 +941,32 @@ function tiltImage() {
 		}
 		//Center
 		else {
-			if (planeList[selectedImage].rotation.y > Math.PI) {
-				planeList[selectedImage].rotation.y -= 0.1;
+			if (planeList[selectedImage].pic.rotation.y > Math.PI) {
+				planeList[selectedImage].pic.rotation.y -= 0.1;
 				metaPlane.rotation.y -= 0.1;
 				metaData_name.rotation.y -= 0.1;
 				metaData_date.rotation.y -= 0.1;
 				metaData_caption.rotation.y -= 0.1;
 			}
 
-			else if (planeList[selectedImage].rotation.y < Math.PI - 0.1 && planeList[selectedImage].rotation.y > 0) {
-				planeList[selectedImage].rotation.y += 0.1;
+			else if (planeList[selectedImage].pic.rotation.y < Math.PI - 0.1 && planeList[selectedImage].pic.rotation.y > 0) {
+				planeList[selectedImage].pic.rotation.y += 0.1;
 				metaPlane.rotation.y += 0.1;
 				metaData_name.rotation.y += 0.1;
 				metaData_date.rotation.y += 0.1;
 				metaData_caption.rotation.y += 0.1;
 			}
 
-			if (planeList[selectedImage].rotation.y < -Math.PI) {
-				planeList[selectedImage].rotation.y += 0.1;
+			if (planeList[selectedImage].pic.rotation.y < -Math.PI) {
+				planeList[selectedImage].pic.rotation.y += 0.1;
 				metaPlane.rotation.y += 0.1;
 				metaData_name.rotation.y += 0.1;
 				metaData_date.rotation.y += 0.1;
 				metaData_caption.rotation.y += 0.1;
 			}
 
-			else if (planeList[selectedImage].rotation.y > -Math.PI + 0.1 && planeList[selectedImage].rotation.y < 0) {
-				planeList[selectedImage].rotation.y -= 0.1;
+			else if (planeList[selectedImage].pic.rotation.y > -Math.PI + 0.1 && planeList[selectedImage].pic.rotation.y < 0) {
+				planeList[selectedImage].pic.rotation.y -= 0.1;
 				metaPlane.rotation.y -= 0.1;
 				metaData_name.rotation.y -= 0.1;
 				metaData_date.rotation.y -= 0.1;
@@ -967,16 +982,16 @@ function tiltImage() {
 }
 
 function animateToFront( destX, destY, destZ, rotateZ) {
-	var d = lineLength(planeList[selectedImage].position.x, planeList[selectedImage].position.y, destX, destY );
+	var d = lineLength(planeList[selectedImage].pic.position.x, planeList[selectedImage].pic.position.y, destX, destY );
 
 	if (d > 0.01 && bMoveToFront) {
 		//Change the position of our selected photo ( destination is camera position )
-		planeList[selectedImage].position.x = moveSpeed * destX + (1 - moveSpeed) * planeList[selectedImage].position.x;
-		planeList[selectedImage].position.y = moveSpeed * destY + (1 - moveSpeed) * planeList[selectedImage].position.y;
-		planeList[selectedImage].position.z = moveSpeed * destZ + (1 - moveSpeed) * planeList[selectedImage].position.z;
+		planeList[selectedImage].pic.position.x = moveSpeed * destX + (1 - moveSpeed) * planeList[selectedImage].pic.position.x;
+		planeList[selectedImage].pic.position.y = moveSpeed * destY + (1 - moveSpeed) * planeList[selectedImage].pic.position.y;
+		planeList[selectedImage].pic.position.z = moveSpeed * destZ + (1 - moveSpeed) * planeList[selectedImage].pic.position.z;
 
 		//Change the rotation of our selected photo ( destination is 0 rotation in all axes )
-		planeList[selectedImage].rotation.z = moveSpeed * rotateZ + (1 - moveSpeed) * planeList[selectedImage].rotation.z;
+		planeList[selectedImage].pic.rotation.z = moveSpeed * rotateZ + (1 - moveSpeed) * planeList[selectedImage].pic.rotation.z;
 	}
 
 
@@ -987,8 +1002,8 @@ function animateToFront( destX, destY, destZ, rotateZ) {
 }
 
 function rotateImage( speed, dest ) {
-	if ( Math.abs( planeList[selectedImage].rotation.y - dest ) > 0.01 && bRotatePic ) {
-		planeList[selectedImage].rotation.y = speed * dest + (1 - speed) * planeList[selectedImage].rotation.y;
+	if ( Math.abs( planeList[selectedImage].pic.rotation.y - dest ) > 0.01 && bRotatePic ) {
+		planeList[selectedImage].pic.rotation.y = speed * dest + (1 - speed) * planeList[selectedImage].pic.rotation.y;
 		metaPlane.rotation.y = speed * (dest+Math.PI) + (1 - speed) * metaPlane.rotation.y;
 		metaData_name.rotation.y = speed * (dest+Math.PI) + (1 - speed) * metaData_name.rotation.y;
 		metaData_date.rotation.y = speed * (dest+Math.PI) + (1 - speed) * metaData_date.rotation.y;
@@ -1121,7 +1136,15 @@ function animate(t) {
 			animateLight( clickedLight, 0.1, 0.0 );
 		}
 
+		for (var i = 0; i < planeList.length; i++) {
+			planeList[i].vel.x += planeList[i].acc.x;
+			planeList[i].vel.y += planeList[i].acc.y;
+			planeList[i].pic.position.x += planeList[i].vel.x;
+			planeList[i].pic.position.y += planeList[i].vel.y;
 
+			planeList[i].acc.set(0,0,0);
+			planeList[i].vel.multiply( damping );
+		}
 
 		if (mouseDown) {
 			slideImages(); //Function to drag images.
