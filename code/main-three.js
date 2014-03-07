@@ -55,7 +55,6 @@ function removeTextContainer() {
 function addTextbox() {
     textbox.classList.add("textbox-close");
     textbox.classList.remove("textbox-far");
-    console.log("fuck it");
 }
 
 function removeTextbox() {
@@ -72,7 +71,6 @@ function showTextbox() {
 function hideTextbox() {
     textbox.classList.add("textbox-hidden");
     textbox.classList.remove("textbox-visible");
-    console.log("goddamit");
 }
 
 function addLeftArrow() {

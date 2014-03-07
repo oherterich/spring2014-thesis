@@ -44,10 +44,14 @@ var bTextboxActive = false;
 var bFirstTimeNoteInstruction = true;
 var bFirstTimeClickInstruction = true;
 
-//Stuff for animating to image to front
+//Stuff for animating plane, light, etc.
 var moveSpeed = 0.35;
 var bMoveToFront = false;
 var putBackRotation = Math.random() * (Math.PI / 2) - (Math.PI/4);
+var bFadeLight = false;
+var bRotatePic = false;
+var rotateSpeed = 0.3;
+var whichRotate = -1;
 
 //Booleans to allow us to drag around our HUD
 var bHUDActive = false;
@@ -304,8 +308,6 @@ for (var i = 0; i < planeList.length; i++) {
 	scene.add(planeList[i]);
 }
 
-console.log(planeList);
-
 
 //CREATE INITIAL BACKGROUND TEXTURE PLANE
 var planeGeo = new THREE.PlaneGeometry(7280,3700,10,10);
@@ -477,7 +479,6 @@ container.addEventListener("mouseup", function (evt) {
 
   	//Set the draggable to false, just in case the user has moved outside of the original HUD
 	bHUDDraggable = false;
-	console.log("mouseup container");
 }, false);
 
 /***************************************************************************************************************/
@@ -511,11 +512,12 @@ function checkPicClick( id ) {
 
 			//Instead of removing original light, turn down intensity to 0. 
 			//This removes the need to update the material later.
-			light.intensity = 0.0;
+			//light.intensity = 0.0;
+			bFadeLight = true;
 
 			//Add the new light to illuminate selected photo.
 			//scene.add(clickedLight);
-			clickedLight.intensity = 1.2;
+			//clickedLight.intensity = 1.0;
 			clickedLight.position.set(camera.position.x, camera.position.y, 1000);
 			clickedLight.target = lookAtThis;
 
@@ -573,8 +575,9 @@ function manageSelectedPhotoClick(x, y) {
 
 
 		//Reset light intensities back to normal.
-		light.intensity = 1.0;
-		clickedLight.intensity = 0.0;	
+		//light.intensity = 1.0;
+		//clickedLight.intensity = 0.0;	
+		bFadeLight = true;
 
 		//Set plane back to original position and rotation
 		//planeList[selectedImage].position.set(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z);
@@ -601,7 +604,11 @@ function manageSelectedPhotoClick(x, y) {
 
 	if (x > w / 2 + imageSize / 3 && x < w / 2 + outerBoundary) {
 		if (bIsFront) {
-			rotateImage(1);
+			//rotateImage(1);
+
+			bRotatePic = true;
+			whichRotate = 0;
+
 			bIsFront = false;
 
 			addTextContainer();
@@ -615,7 +622,11 @@ function manageSelectedPhotoClick(x, y) {
 		}
 
 		else {
-			rotateImage(0);
+			//rotateImage(0);
+
+			bRotatePic = true;
+			whichRotate = 1;
+
 			bIsFront = true;
 
 			removeTextContainer();
@@ -628,7 +639,11 @@ function manageSelectedPhotoClick(x, y) {
 
 	if (x < w / 2 - imageSize / 3 && x > w / 2 - outerBoundary) {
 		if (bIsFront) {
-			rotateImage(1);
+			//rotateImage(1);
+
+			bRotatePic = true;
+			whichRotate = 2;
+
 			bIsFront = false;
 
 			addTextContainer();
@@ -642,7 +657,11 @@ function manageSelectedPhotoClick(x, y) {
 		}
 
 		else {
-			rotateImage(0);
+			//rotateImage(0);
+
+			bRotatePic = true;
+			whichRotate = 3;
+
 			bIsFront = true;
 
 			removeTextContainer();
@@ -698,22 +717,8 @@ function checkCameraBoundary() {
 
 
 function setProjection() {
-	// The following will translate the mouse coordinates into a number
-	// ranging from -1 to 1, where
-	//      x == -1 && y == -1 means top-left, and
-	//      x ==  1 && y ==  1 means bottom right
-	// var x = ( moveInfo.x / SCREEN_WIDTH ) * SCREEN_WIDTH / 2 - 1;
-	// var y = -( moveInfo.y / SCREEN_HEIGHT ) * SCREEN_HEIGHT / 2 + 1;
-
-	// Now we set our direction vector to those initial values
-	//directionVector.set(x, y, 0.5);
-
 	//For some reason, the following code accurately sets the position of the mouse in 3D space.
 	//I don't really know how projection vectors work, so I'm just gonna go with it.
-	//directionVector.set(pickMouse.x, pickMouse.y, 1.0);
-
-	//projector.unprojectVector( directionVector, camera );
-
 	var vector = new THREE.Vector3(
     ( mouse.x / window.innerWidth ) * 2 - 1,
     - ( mouse.y / window.innerHeight ) * 2 + 1,
@@ -730,8 +735,6 @@ function setProjection() {
 	directionVector.x = pos.x;
 	directionVector.y = pos.y;
 	directionVector.z = pos.z;
-
-	console.log(pos);
 }
 
 //This function allows us to select images without picking the ones underneath
@@ -831,75 +834,6 @@ function checkTextbox() {
 /********************************************ANIMATION FUNCTIONS************************************************/
 /***************************************************************************************************************/
 /***************************************************************************************************************/
-
-function rotateImage( direction ) {
-	//If direction is equal to zero, rotate in a negative direction
-	if (direction == 0) {
-		// if (planeList[selectedImage].rotation.y >= -Math.PI) {
-		// 	planeList[selectedImage].rotation.y -= 0.3;
-		// 	metaPlane.rotation.y -= 0.3;
-		// 	metaData_name.rotation.y -= 0.3;
-		// 	metaData_date.rotation.y -= 0.3;
-		// 	metaData_caption.rotation.y -= 0.3;
-
-		// }
-
-		planeList[selectedImage].rotation.y = 0;
-		metaPlane.rotation.y = Math.PI;
-		metaData_name.rotation.y = Math.PI;
-		metaData_date.rotation.y = Math.PI;
-		metaData_caption.rotation.y = Math.PI;		
-	}
-
-	//If direction is equal to one, rotate in a positive direction
-	else if (direction == 1) {
-		// if (planeList[selectedImage].rotation.y <= Math.PI) {
-		// 	planeList[selectedImage].rotation.y += 0.3;
-		// 	metaPlane.rotation.y += 0.3;
-		// 	metaData_name.rotation.y += 0.3;
-		// 	metaData_date.rotation.y += 0.3;
-		// 	metaData_caption.rotation.y += 0.3;
-		// }
-
-		planeList[selectedImage].rotation.y = Math.PI;
-		metaPlane.rotation.y = Math.PI * 2;
-		metaData_name.rotation.y = Math.PI * 2;
-		metaData_date.rotation.y = Math.PI * 2;
-		metaData_caption.rotation.y = Math.PI * 2;
-	}
-
-	//Rotate image back to normal
-	else if (direction == 2) {
-		if ( planeList[selectedImage].rotation.y < 0) {
-			 planeList[selectedImage].rotation.y += 0.3;
-			 metaPlane.rotation.y += 0.3;
-			 metaData_name.rotation.y += 0.3;
-			 metaData_date.rotation.y += 0.3;
-			 metaData_caption.rotation.y += 0.3;
-		}
-	}
-
-	//Rotate image back to normal
-	else if (direction == 3) {
-		if ( planeList[selectedImage].rotation.y > 0 ) {
-			planeList[selectedImage].rotation.y -= 0.3;
-			metaPlane.rotation.y -= 0.3;
-			metaData_name.rotation.y -= 0.3;
-			metaData_date.rotation.y -= 0.3;
-			metaData_caption.rotation.y -= 0.3;
-		}	
-	}
-
-	//We need to account for if the rotation is exactly 0;
-	else if (direction == 4) {
-		planeList[selectedImage].rotation.y = 0;
-		metaPlane.rotation.y = Math.PI;
-		metaData_name.rotation.y = Math.PI;
-		metaData_date.rotation.y = Math.PI;
-		metaData_caption.rotation.y = Math.PI;
-	}
-}
-
 function tiltImage() {
 	if(bIsFront) {
 		if (mouse.x > w / 2 + imageSize / 3 && mouse.x < w / 2 + outerBoundary) {
@@ -943,12 +877,21 @@ function tiltImage() {
 			addAutoCursor();
 		}
 	}
+	//Photo is on back
 	else {
+		//Right side
 		if (mouse.x > w / 2 + imageSize / 2 && mouse.x < w / 2 + outerBoundary && !bTextboxActive) {
 			removeNotes();
 			hideTextbox();
 
-			if (planeList[selectedImage].rotation.y < Math.PI + Math.PI / 12) {
+			if (planeList[selectedImage].rotation.y < Math.PI + Math.PI / 12 && planeList[selectedImage].rotation.y > 0) {
+				planeList[selectedImage].rotation.y += 0.1;
+				metaPlane.rotation.y += 0.1;
+				metaData_name.rotation.y += 0.1;
+				metaData_date.rotation.y += 0.1;
+				metaData_caption.rotation.y += 0.1;
+			}
+			else if ( planeList[selectedImage].rotation.y < -Math.PI + Math.PI/12 && planeList[selectedImage].rotation.y < 0 ) {
 				planeList[selectedImage].rotation.y += 0.1;
 				metaPlane.rotation.y += 0.1;
 				metaData_name.rotation.y += 0.1;
@@ -958,12 +901,19 @@ function tiltImage() {
 
 			addRotateCursor();
 		}
-
+		//Left side
 		else if (mouse.x < w / 2 - imageSize / 2 && mouse.x > w / 2 - outerBoundary && !bTextboxActive) {
 			removeNotes();
 			hideTextbox();
 
-			if (planeList[selectedImage].rotation.y > Math.PI - Math.PI / 12) {
+			if (planeList[selectedImage].rotation.y > Math.PI - Math.PI / 12 && planeList[selectedImage].rotation.y > 0) {
+				planeList[selectedImage].rotation.y -= 0.1;
+				metaPlane.rotation.y -= 0.1;
+				metaData_name.rotation.y -= 0.1;
+				metaData_date.rotation.y -= 0.1;
+				metaData_caption.rotation.y -= 0.1;
+			}
+			else if (planeList[selectedImage].rotation.y > -Math.PI - Math.PI/12 && planeList[selectedImage].rotation.y < 0) {
 				planeList[selectedImage].rotation.y -= 0.1;
 				metaPlane.rotation.y -= 0.1;
 				metaData_name.rotation.y -= 0.1;
@@ -973,6 +923,7 @@ function tiltImage() {
 
 			addRotateCursor();
 		}
+		//Center
 		else {
 			if (planeList[selectedImage].rotation.y > Math.PI) {
 				planeList[selectedImage].rotation.y -= 0.1;
@@ -982,7 +933,7 @@ function tiltImage() {
 				metaData_caption.rotation.y -= 0.1;
 			}
 
-			else if (planeList[selectedImage].rotation.y < Math.PI) {
+			else if (planeList[selectedImage].rotation.y < Math.PI - 0.1 && planeList[selectedImage].rotation.y > 0) {
 				planeList[selectedImage].rotation.y += 0.1;
 				metaPlane.rotation.y += 0.1;
 				metaData_name.rotation.y += 0.1;
@@ -990,10 +941,27 @@ function tiltImage() {
 				metaData_caption.rotation.y += 0.1;
 			}
 
+			if (planeList[selectedImage].rotation.y < -Math.PI) {
+				planeList[selectedImage].rotation.y += 0.1;
+				metaPlane.rotation.y += 0.1;
+				metaData_name.rotation.y += 0.1;
+				metaData_date.rotation.y += 0.1;
+				metaData_caption.rotation.y += 0.1;
+			}
+
+			else if (planeList[selectedImage].rotation.y > -Math.PI + 0.1 && planeList[selectedImage].rotation.y < 0) {
+				planeList[selectedImage].rotation.y -= 0.1;
+				metaPlane.rotation.y -= 0.1;
+				metaData_name.rotation.y -= 0.1;
+				metaData_date.rotation.y -= 0.1;
+				metaData_caption.rotation.y -= 0.1;
+			}
+
 			addAutoCursor();
 			addNotes();
 			showTextbox();
 		}
+
 	}
 }
 
@@ -1015,6 +983,32 @@ function animateToFront( destX, destY, destZ, rotateZ) {
 		bMoveToFront = false;
 	}
 
+}
+
+function rotateImage( speed, dest ) {
+	if ( Math.abs( planeList[selectedImage].rotation.y - dest ) > 0.01 && bRotatePic ) {
+		planeList[selectedImage].rotation.y = speed * dest + (1 - speed) * planeList[selectedImage].rotation.y;
+		metaPlane.rotation.y = speed * (dest+Math.PI) + (1 - speed) * metaPlane.rotation.y;
+		metaData_name.rotation.y = speed * (dest+Math.PI) + (1 - speed) * metaData_name.rotation.y;
+		metaData_date.rotation.y = speed * (dest+Math.PI) + (1 - speed) * metaData_date.rotation.y;
+		metaData_caption.rotation.y = speed * (dest+Math.PI) + (1 - speed) * metaData_caption.rotation.y;
+
+	}
+	else {
+		bRotatePic = false;
+		whichRotate = -1;
+	}
+}
+
+
+function animateLight( whichLight, speed, brightness ) {
+	if ( Math.abs(whichLight.intensity - brightness) > 0.001 && bFadeLight) {
+		whichLight.intensity = speed * brightness + (1 - speed) * whichLight.intensity;
+	}
+
+	else {
+		bFadeLight = false;
+	}
 }
 
 
@@ -1082,8 +1076,6 @@ function animate(t) {
 		camera.position.z = 4500;
 	}
 
-	//console.log(bHUDDraggable + " " + mouse.x + " | " + mouse.y);
-
 	/***************************************************************************************/
 	/***************************************STATE ZERO**************************************/
 	/***************************************************************************************/
@@ -1124,7 +1116,11 @@ function animate(t) {
 
 		if (selectedImage != -1) {
 			animateToFront(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z, putBackRotation);
+			animateLight( light, 0.1, 1.0 );
+			animateLight( clickedLight, 0.1, 0.0 );
 		}
+
+
 
 		if (mouseDown) {
 			slideImages(); //Function to drag images.
@@ -1159,9 +1155,31 @@ function animate(t) {
 
 		animateToFront( camera.position.x, camera.position.y, camera.position.z - 800, 0);
 
+		animateLight( light, 0.02, 0.0 );
+		animateLight( clickedLight, 0.02, 1.0 );
+
 		checkTextbox();
 
-		tiltImage();
+		if (whichRotate == 0) {
+			rotateImage( rotateSpeed, Math.PI);
+		}
+
+		if (whichRotate == 1) {
+			rotateImage( rotateSpeed, 0);
+		}
+
+		if (whichRotate == 2) {
+			rotateImage( rotateSpeed, -Math.PI);
+		}
+
+		if (whichRotate == 3) {
+			rotateImage( rotateSpeed, 0);
+		}
+
+		if (!bRotatePic) {
+			tiltImage();
+		}
+		
 	}
 
 	window.requestAnimationFrame(animate, renderer.domElement);
