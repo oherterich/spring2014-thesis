@@ -196,3 +196,9 @@ body {
 
 .cursor-auto {
   cursor: auto; }
+
+#test {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: pink; }

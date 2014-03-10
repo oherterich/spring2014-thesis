@@ -276,8 +276,8 @@ function Plane( pic, vel, acc ) {
 // INITIALIZE GROUND PLANES
 var planeList = new Array();
 
-for (var i = 0; i < photoLinks.length; i++) {
-//for (var i = 0; i < 10; i++) {
+//for (var i = 0; i < photoLinks.length; i++) {
+for (var i = 0; i < 10; i++) {
 	var x = Math.random() * 4000 - 2000;
 	var y = Math.random() * 4000 - 2000;
 	var z = Math.random() * maxZDepth;
@@ -449,7 +449,6 @@ document.body.addEventListener('mousemove', function (evt) {
 			}
 		}
 	}
-
 }, false);
 
 //Listen for key presses
@@ -1091,6 +1090,8 @@ function animate(t) {
 	if (camera.position.z > 4500) {
 		camera.position.z = 4500;
 	}
+
+	socket.emit( 'movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
 
 	/***************************************************************************************/
 	/***************************************STATE ZERO**************************************/
