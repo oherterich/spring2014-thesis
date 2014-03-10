@@ -78,8 +78,6 @@ var updateLights = function( userid, lookX, lookY, camX, camY ) {
 
 			userList[i].light.position.set( camX, camY, 1200);
 			userList[i].light.target = userList[i].look;
-
-			userList[i].m.position.set(lookX, lookY, 0);
 		}
 	}
 }
