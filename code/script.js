@@ -149,7 +149,7 @@ scene.add(clickedLight);
 
 //Big light to illuminate space (for testing purposes)
 var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.0);
-scene.add(hemiLight);
+//scene.add(hemiLight);
 
 //Add something for the light to look at
 var lookAtThisGeom = new THREE.Geometry(100, 100, 10, 10);
