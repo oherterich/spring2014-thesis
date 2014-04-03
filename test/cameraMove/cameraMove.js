@@ -1,3 +1,7 @@
+window.onscroll = function( evt ) {
+	console.log("scrolL!");
+}
+
 var w = window.innerWidth,
 	h = window.innerHeight;
 

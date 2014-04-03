@@ -22,6 +22,7 @@ body {
   height: 100%;
   margin: 0 auto;
   margin-top: 17%;
+  padding-left: 2.5%;
   transform: rotate(-4.5deg);
   -ms-transform: rotate(-4.5deg);
   /* IE 9 */
@@ -31,16 +32,18 @@ body {
     width: 79%;
     margin: 0 auto;
     color: #898682;
-    font-size: 2.6rem;
+    font-size: 2.2rem;
     text-align: center;
     font-weight: normal;
     border-bottom: 1px solid #2c2b29; }
   #title h3 {
     color: #898682;
-    font-size: 1.0rem;
+    font-size: 0.9rem;
     font-weight: normal;
     text-align: center;
-    padding-top: 4%; }
+    padding-top: 4%;
+    width: 79%;
+    margin: 0 auto; }
 
 #begin {
   width: 33%;

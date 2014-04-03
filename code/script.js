@@ -11,22 +11,23 @@ var state = 0;
 
 //Determines size of images (planes)
 var imageSize = 500;
-var maxZDepth = 1.0;
+var maxZDepth = 25.0;
 
 //Determine boundary percentage for moving camera
 var boundaryPct = 0.25;
 var outerBoundary = (imageSize*3) / 4;
 
 //Boundary for edges of world
-var horizBoundary = 6400;
-var vertBoundary = 3600;
+var horizBoundary = 2560;
+var vertBoundary = 1600;
 
 //Variable that controls the small rectangle in the HUD;
 var HUD = document.getElementById("HUD");
+var lightHUDSize = 45.0; //the size of the HUD_light.png file (px)
 var bMap = true;
 
 //Max speed for camera pan
-var panMaxSpeed = 10;
+var panMaxSpeed = 20;
 
 //Variables for mouse coordinates
 var mouse = new THREE.Vector2()
@@ -53,8 +54,11 @@ var bFadeLight = false;
 var bRotatePic = false;
 var rotateSpeed = 0.3;
 var whichRotate = -1;
-var damping = new THREE.Vector3( 0.75, 0.75, 0.75);
+var damping = new THREE.Vector3( 0.85, 0.85, 0.85);
 var maxSpeed = new THREE.Vector3(10.0, 10.0, 0);
+
+//Keep track of if we're dragging or rotation or not doing anything. -1 is nothing, 0 is drag, 1 is rotate
+var dragState = -1;
 
 //Booleans to allow us to drag around our HUD
 var bHUDActive = false;
@@ -140,16 +144,16 @@ var scene = new THREE.Scene();
 
 //Light for state 0
 //var light = new THREE.SpotLight(0xE8E0BE, 1.0, 5000.0, Math.PI/8, 75.0); //smaller
-var light = new THREE.SpotLight(0xE8E0BE, 1.0, 10000.0, Math.PI/4, 10.0); //bigger
+var light = new THREE.SpotLight(0xE8E0BE, 1.0, 10000.0, Math.PI/6, 40.0); //bigger
 scene.add(light);
 
 //Light for state 1
-var clickedLight = new THREE.SpotLight(0xE8E0BE, 0.0, 10000.0, Math.PI/5, 15.0);
+var clickedLight = new THREE.SpotLight(0xE8E0BE, 0.0, 10000.0, Math.PI/4, 15.0);
 scene.add(clickedLight);
 
 //Big light to illuminate space (for testing purposes)
-var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.0);
-//scene.add(hemiLight);
+var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.1);
+scene.add(hemiLight);
 
 //Add something for the light to look at
 var lookAtThisGeom = new THREE.Geometry(100, 100, 10, 10);
@@ -175,8 +179,8 @@ light.castShadow = true;
 /***************************************************************************************/
 //Create plane for meta data
 var metaPlaneGeo = new THREE.PlaneGeometry( imageSize, imageSize, 10, 10);
-var metaPlaneTexture = THREE.ImageUtils.loadTexture("instagram_img/paper-back.jpg");
-var metaPlaneBump = THREE.ImageUtils.loadTexture("instagram_img/paper-back-bump.jpg");
+var metaPlaneTexture = THREE.ImageUtils.loadTexture("img/paper-back.jpg");
+var metaPlaneBump = THREE.ImageUtils.loadTexture("img/paper-back-bump.jpg");
 var metaPlaneMat = new THREE.MeshPhongMaterial( { map: metaPlaneTexture, bumpMap: metaPlaneBump, bumpScale: 1 } );
 var metaPlane = new THREE.Mesh( metaPlaneGeo, metaPlaneMat );
 metaPlane.rotation.y = Math.PI;
@@ -276,13 +280,18 @@ function Plane( pic, vel, acc ) {
 // INITIALIZE GROUND PLANES
 var planeList = new Array();
 
-//for (var i = 0; i < photoLinks.length; i++) {
-for (var i = 0; i < 10; i++) {
-	var x = Math.random() * 4000 - 2000;
-	var y = Math.random() * 4000 - 2000;
-	var z = Math.random() * maxZDepth;
+for (var i = 0; i < photoLinks.length; i++) {
+//for (var i = 0; i < 50; i++) {
+	// var x = Math.random() * (horizBoundary*2) - horizBoundary;
+	// var y = Math.random() * (vertBoundary*2) - vertBoundary;
+	// var z = Math.random() * maxZDepth;
+	//var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
+	
+	var x = photoLinks[i]['posX'] * 1;
+	var y = photoLinks[i]['posY'] * 1;
+	var z = photoLinks[i]['posZ'] * 1;
+	var rot = photoLinks[i]['rot'] * 1;
 
-	var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
 	//var w = Math.random() * 10;
 
 	var planeGeo = new THREE.PlaneGeometry(imageSize, imageSize, 10, 10);
@@ -292,7 +301,7 @@ for (var i = 0; i < 10; i++) {
 	//var rand = getRandomInt(photoLinks.length-18, photoLinks.length);
 	var texture = THREE.ImageUtils.loadTexture("instagram_img/" + photoLinks[i]['link'] + ".jpg");
 	var rand2 = Math.floor(Math.random() * 5);
-	var rough = THREE.ImageUtils.loadTexture("instagram_img/texture_" + rand2 + ".jpg");
+	var rough = THREE.ImageUtils.loadTexture("img/texture_" + rand2 + ".jpg");
 	var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: rough, bumpScale: 5 });
 
 	// var c = new THREE.Color( 0xFFFFFF );
@@ -324,56 +333,11 @@ for (var i = 0; i < planeList.length; i++) {
 
 //CREATE INITIAL BACKGROUND TEXTURE PLANE
 var planeGeo = new THREE.PlaneGeometry(7280,3700,10,10);
-var texture = THREE.ImageUtils.loadTexture("instagram_img/background_texture_large.jpg");
+var texture = THREE.ImageUtils.loadTexture("img/background_texture_large.jpg");
 var planeMat = new THREE.MeshPhongMaterial({ map: texture });
 var backgroundTexture = new THREE.Mesh(planeGeo, planeMat);
 backgroundTexture.position.z = -1;
 scene.add( backgroundTexture );
-
-
-//This function adds a plane to the scene based where the camera and mouse is located.
-// function addPlane() {
-
-// 	planeGenerateScale = map_range(camera.position.z, 1000, 4500, 500, 2000);
-
-// 	var x = lookAtThis.position.x;
-// 	var y = lookAtThis.position.y;
-
-// 	while (lineLength(lookAtThis.position.x, lookAtThis.position.y, x, y) < planeGenerateScale) {
-
-// 		x = camera.position.x + Math.cos(Math.random() * Math.PI * 2) * planeGenerateScale;
-// 		y = camera.position.y + Math.sin(Math.random() * Math.PI * 2) * planeGenerateScale;
-
-// 	}
-
-// 	var z = Math.random() * 10;
-
-// 	var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
-
-// 	var planeGeo = new THREE.PlaneGeometry(imageSize, imageSize, 10, 10);
-// 	var planeMat = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
-	
-// 	var rand = Math.floor(Math.random() * photoLinks.length);
-// 	var texture = THREE.ImageUtils.loadTexture("instagram_img/" + photoLinks[rand]['link'] + ".jpg");
-// 	var rand2 = Math.floor(Math.random() * 5);
-// 	var rough = THREE.ImageUtils.loadTexture("instagram_img/texture_" + rand2 + ".jpg");
-// 	var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: rough, bumpScale: 5 });
-
-// 	// var c = new THREE.Color( 0xFFFFFF );
-// 	// c.setRGB( Math.random(), Math.random(), Math.random() );
-// 	// var material = new THREE.MeshLambertMaterial({ color: c });
-
-// 	var plane = new THREE.Mesh(planeGeo, material);
-
-// 	plane.position.x = x;
-// 	plane.position.y = y;
-// 	plane.position.z = z;
-
-// 	plane.rotation.z = rot;
-
-// 	planeList.push( plane );
-// 	scene.add( planeList[planeList.length - 1])
-// }
 
 //This function is used to remove planes that are too far away to see, removing unnecessary rendering.
 function checkPlaneDistance() {
@@ -440,8 +404,8 @@ document.body.addEventListener('mousemove', function (evt) {
 	}
 
 	if (instruction[0].style.opacity > 0.0) {
-		instruction[0].style.opacity -= 0.005;
-		if (instruction[0].style.opacity <= 0.005){
+		instruction[0].style.opacity -= 0.01;
+		if (instruction[0].style.opacity <= 0.01){
 			instruction[0].style.opacity = 0;
 			removeInstruction(0);
 			if (bFirstTimeClickInstruction) {
@@ -482,16 +446,26 @@ container.addEventListener("mousedown", function (evt) {
 
   if (state == 0) {
   	pickImage();
-  	//setSelectedImage();
   }
 }, false);
 
 container.addEventListener("mouseup", function (evt) {
-  --mouseDown;
-
+	--mouseDown;
+	
+	//Reset some of our drag things when we release the mouse
+	dragState = -1;
+	addAutoCursor();
+  	
   	//Set the draggable to false, just in case the user has moved outside of the original HUD
 	bHUDDraggable = false;
 }, false);
+
+container.addEventListener('mousewheel', function (evt) {
+	if (state == 0) {
+		var zoom = map_range( evt.wheelDeltaY, -500, 500, -50, 50);
+		camera.position.z += zoom;
+	}
+});
 
 /***************************************************************************************************************/
 /***************************************************************************************************************/
@@ -530,7 +504,7 @@ function checkPicClick( id ) {
 			//Add the new light to illuminate selected photo.
 			//scene.add(clickedLight);
 			//clickedLight.intensity = 1.0;
-			clickedLight.position.set(camera.position.x, camera.position.y, 1000);
+			clickedLight.position.set(camera.position.x, camera.position.y, camera.position.z - 200);
 			clickedLight.target = lookAtThis;
 
 			//In order to render the new light, we must update the material
@@ -598,7 +572,7 @@ function manageSelectedPhotoClick(x, y) {
 		planeList[selectedImage].pic.rotation.y = 0;
 		bMoveToFront = true;
 		putBackRotation = Math.random() * (Math.PI / 2) - (Math.PI/4);
-		maxZDepth += 0.1;
+		maxZDepth += 1.0;
 
 		//Set selectedImage back to a non-number
 		//selectedImage = -1; 
@@ -726,6 +700,13 @@ function checkCameraBoundary() {
 		camSpeedY = 0;
 		camera.position.y = -vertBoundary + h / 2;
 	}
+
+	if (camera.position.z < 1200) {
+		camera.position.z = 1200;
+	}
+	if (camera.position.z > 2500) {
+		camera.position.z = 2500;
+	}
 }
 
 
@@ -758,28 +739,26 @@ function pickImage() {
 
 	pickRaycaster.set( camera.position, vector.sub( camera.position ).normalize() );
 
-	//var intersects = pickRaycaster.intersectObjects( scene.children );
 	var intersects = pickRaycaster.intersectObjects( scene.children );
 
 	if ( intersects.length > 0 ) {
+		INTERSECTED = intersects[ 0 ].object;
 
-		//if ( INTERSECTED != intersects[ 0 ].object ) {
-			if ( INTERSECTED ) {
-				//INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+		for (var i = 0; i < planeList.length; i++) {
+			if (planeList[i].pic.id == INTERSECTED.id) {
+				var d = lineLength( lookAtThis.position.x, lookAtThis.position.y, planeList[i].pic.position.x, planeList[i].pic.position.y );
+				
+				if ( d < imageSize / 2 ) {
+					dragState = 0;
+				}
+				else {
+					dragState = 1;
+				}
 			}
-
-			INTERSECTED = intersects[ 0 ].object;
-			//INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-			//INTERSECTED.material.emissive.setHex( 0xff0000 );
-
-		//}
-
-	} else {
-
-		//if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
+		}
+	}
+	else {
 		INTERSECTED = null;
-
 	}
 }
 
@@ -787,10 +766,38 @@ function slideImages() {
 	if (INTERSECTED != null) {
 		for (var i = 0; i < planeList.length; i++) {
 			if (planeList[i].pic.id == INTERSECTED.id) {
-				var diff = new THREE.Vector3( lookAtThis.position.x - prevLookAtThis.x, lookAtThis.position.y - prevLookAtThis.y );
-				planeList[i].pic.position.x += diff.x;
-				planeList[i].pic.position.y += diff.y;
-				planeList[i].vel = diff.divide( new THREE.Vector3(3,3,3));
+				var d = lineLength( lookAtThis.position.x, lookAtThis.position.y, planeList[i].pic.position.x, planeList[i].pic.position.y );
+				//If we're within the middle of our picture, translate.
+				if ( d < imageSize / 2 && dragState == 0) {
+					addTranslateCursor();
+
+					var diff = new THREE.Vector3( lookAtThis.position.x - prevLookAtThis.x, lookAtThis.position.y - prevLookAtThis.y );
+					planeList[i].pic.position.x += diff.x;
+					planeList[i].pic.position.y += diff.y;
+					planeList[i].vel = diff.divide( new THREE.Vector3(3,3,3));
+				}
+				//If we're on one of the edges, rotate.
+				else if (dragState == 1) {
+					//Find the angle between the current mouse and previous mouse. This will give us the rotation.
+					var angleA = Math.atan2( lookAtThis.position.y - planeList[i].pic.position.y, lookAtThis.position.x - planeList[i].pic.position.x);
+					var angleB = Math.atan2( prevLookAtThis.y - planeList[i].pic.position.y, prevLookAtThis.x - planeList[i].pic.position.x );
+					var angleC = angleA - angleB;
+					planeList[i].pic.rotation.z += angleC;
+
+					//We should also change the cursor.
+					if ( lookAtThis.position.x < planeList[i].pic.position.x && lookAtThis.position.y >= planeList[i].pic.position.y) {
+						addRotateTopCursor();
+					}
+					else if ( lookAtThis.position.x > planeList[i].pic.position.x && lookAtThis.position.y >= planeList[i].pic.position.y) {
+						addRotateRightCursor();
+					}
+					else if ( lookAtThis.position.x > planeList[i].pic.position.x && lookAtThis.position.y < planeList[i].pic.position.y) {
+						addRotateBottomCursor();
+					}
+					else if ( lookAtThis.position.x < planeList[i].pic.position.x && lookAtThis.position.y < planeList[i].pic.position.y) {
+						addRotateLeftCursor();
+					}
+				}
 			}
 		}
 	}
@@ -808,8 +815,8 @@ function setSelectedImage() {
 //This function moves the rectangle inside the HUD
 function setHUD() {
 	if (bMap) {
-		var horiz = map_range(camera.position.x, -horizBoundary, horizBoundary, 0, 256) - 26;
-		var vert = map_range(camera.position.y, vertBoundary, -vertBoundary, 0, 160) - 16;
+		var horiz = map_range(camera.position.x, -horizBoundary, horizBoundary, 0, 256) - lightHUDSize/2;
+		var vert = map_range(camera.position.y, vertBoundary, -vertBoundary, 0, 160) - lightHUDSize/2;
 
 		userPosition.style.left = horiz + "px";
 	 	userPosition.style.top = vert + "px";
@@ -827,8 +834,8 @@ function setHUD() {
 }
 
 function dragHUD() {
-	var horiz = map_range(mouse.x, w-256-26, w-26, 0, 256) - 26;
-	var vert = map_range(mouse.y, h-160-16, h, 0, 160) - 16;
+	var horiz = map_range(mouse.x, w-256-lightHUDSize/2, w-256-lightHUDSize/2, 0, 256) - lightHUDSize/2;
+	var vert = map_range(mouse.y, h-160-lightHUDSize/2, h, 0, 160) - lightHUDSize/2;
 
 	userPosition.style.left = horiz + "px";
 	userPosition.style.top = vert + "px";
@@ -1084,14 +1091,7 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
 
 function animate(t) {
 
-	if (camera.position.z < 1000) {
-		camera.position.z = 1000;
-	}
-	if (camera.position.z > 4500) {
-		camera.position.z = 4500;
-	}
-
-	socket.emit( 'movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
+	// socket.emit( 'movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
 
 	/***************************************************************************************/
 	/***************************************STATE ZERO**************************************/

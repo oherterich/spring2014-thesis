@@ -78,7 +78,7 @@ $(document).ready(function(){
 					type : "POST",
 					url : "savePhotos.php",
 					dataType : "jsonp",
-					data : parsed_json,
+					data : encodeURI(parsed_json),
 					complete : function() {
 					}
 				})

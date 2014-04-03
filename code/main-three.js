@@ -107,29 +107,110 @@ function addRotateCursor() {
     body.classList.add("cursor-rotate");
     body.classList.remove("cursor-auto");
     body.classList.remove("cursor-write");
+    body.classList.remove("cursor-rotate-top");
+    body.classList.remove("cursor-rotate-right");
+    body.classList.remove("cursor-rotate-bottom");
+    body.classList.remove("cursor-rotate-left");
+    body.classList.remove("cursor-translate");
 }
 
+function addRotateTopCursor() {
+    body.classList.add("cursor-rotate-top");
+    body.classList.remove("cursor-auto");
+    body.classList.remove("cursor-write");
+    body.classList.remove("cursor-rotate");
+    body.classList.remove("cursor-rotate-right");
+    body.classList.remove("cursor-rotate-bottom");
+    body.classList.remove("cursor-rotate-left");
+    body.classList.remove("cursor-translate");
+}
+
+function addRotateRightCursor() {
+    body.classList.add("cursor-rotate-right");
+    body.classList.remove("cursor-auto");
+    body.classList.remove("cursor-write");
+    body.classList.remove("cursor-rotate");
+    body.classList.remove("cursor-rotate-top");
+    body.classList.remove("cursor-rotate-bottom");
+    body.classList.remove("cursor-rotate-left");
+    body.classList.remove("cursor-translate");
+}
+
+function addRotateBottomCursor() {
+    body.classList.add("cursor-rotate-bottom");
+    body.classList.remove("cursor-auto");
+    body.classList.remove("cursor-write");
+    body.classList.remove("cursor-rotate");
+    body.classList.remove("cursor-rotate-right");
+    body.classList.remove("cursor-rotate-top");
+    body.classList.remove("cursor-rotate-left");
+    body.classList.remove("cursor-translate");
+}
+
+function addRotateLeftCursor() {
+    body.classList.add("cursor-rotate-left");
+    body.classList.remove("cursor-auto");
+    body.classList.remove("cursor-write");
+    body.classList.remove("cursor-rotate");
+    body.classList.remove("cursor-rotate-right");
+    body.classList.remove("cursor-rotate-bottom");
+    body.classList.remove("cursor-rotate-top");
+    body.classList.remove("cursor-translate");
+}
 
 function addWriteCursor() {
     body.classList.add("cursor-write");
     body.classList.remove("cursor-auto");
     body.classList.remove("cursor-rotate");
+    body.classList.remove("cursor-rotate-top");
+    body.classList.remove("cursor-rotate-right");
+    body.classList.remove("cursor-rotate-bottom");
+    body.classList.remove("cursor-rotate-left");
+    body.classList.remove("cursor-translate");
 }
 
 function addAutoCursor() {
     body.classList.add("cursor-auto");
     body.classList.remove("cursor-rotate");
     body.classList.remove("cursor-write");
+    body.classList.remove("cursor-rotate-top");
+    body.classList.remove("cursor-rotate-right");
+    body.classList.remove("cursor-rotate-bottom");
+    body.classList.remove("cursor-rotate-left");
+    body.classList.remove("cursor-translate");
+}
+
+function addTranslateCursor() {
+    body.classList.add("cursor-translate");
+    body.classList.remove("cursor-auto");
+    body.classList.remove("cursor-rotate");
+    body.classList.remove("cursor-write");
+    body.classList.remove("cursor-rotate-top");
+    body.classList.remove("cursor-rotate-right");
+    body.classList.remove("cursor-rotate-bottom");
+    body.classList.remove("cursor-rotate-left");
 }
 
 function addNotes() {
     notes.classList.add("notes-visible");
     notes.classList.remove("notes-hidden");
+    notes.classList.remove("notes-rotateLeft");
+    notes.classList.remove("notes-rotateRight");
 }
 
 function removeNotes() {
     notes.classList.add("notes-hidden");
     notes.classList.remove("notes-visible");
+}
+
+function rotateLeftNotes() {
+    notes.classList.add("notes-rotateLeft");
+    notes.classList.remove("notes-rotateRight");
+}
+
+function rotateRightNotes() {
+    notes.classList.add("notes-rotateRight");
+    notes.classList.remove("notes-rotateLeft");
 }
 
 function clearNotes() {
@@ -190,16 +271,6 @@ textbox.addEventListener('keydown', function(evt) {
         removeInstruction(2);
     }
 });
-
-// submit.addEventListener('click', function(evt) {
-//     var userComment = textbox.value;
-//     var userid = photoLinks[selectedImage]['link'];
-//     saveComment( userComment, userid );
-//     removeTextbox();
-//     textbox.blur();
-//     console.log(textbox);
-//     console.log(document.activeElement.nodeName);
-// });
 
 textbox.addEventListener('mouseover', function(evt) {
     bTextboxActive = true;

@@ -10,7 +10,7 @@
 
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>	
     <script src="three.min.js"></script>
-    <script src="TrackballControls.js"></script>
+    <!--<script src="TrackballControls.js"></script>-->
 </head>
 <body>
 	<div id="container"></div>
@@ -26,15 +26,15 @@
         <div id="user-position"></div>
     </section>
     <section id="textContainer" class="textcontainer-hidden">
+         <textarea id="textbox" class="textbox-visible" placeholder="Leave a note."></textarea>
+        <!--<input type="submit" id="submit" class="textbox-visible">-->
         <div id="notes" class="notes-visible">
         </div>
-        <textarea id="textbox" class="textbox-visible" placeholder="Leave a note."></textarea>
-        <!--<input type="submit" id="submit" class="textbox-visible">-->
     </section>
-	<script src="script.js"></script>
-    <script src="main-three.js"></script>
+	<script src="script-ck.js"></script>
+    <script src="main-three-ck.js"></script>
 
-    <script src="js/node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
-    <script src="js/nodeClient.js"></script>
+    <!--<script src="js/node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
+    <script src="js/nodeClient.js"></script>-->
 </body>
 </html>

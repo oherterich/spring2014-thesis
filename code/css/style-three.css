@@ -16,15 +16,15 @@ body {
   right: 10px;
   width: 256px;
   height: 160px;
-  border: 1px solid #999; }
+  background: url("../img/HUD_outline.png") no-repeat center center; }
 
 #user-position {
   position: absolute;
   top: 0px;
   left: 0px;
-  width: 52px;
-  height: 32px;
-  border: 1px solid #bb0000; }
+  width: 45px;
+  height: 45px;
+  background: url("../img/HUD_light.png") no-repeat center center; }
 
 #user-position:hover {
   cursor: pointer; }
@@ -38,11 +38,36 @@ body {
 
 .notes-visible {
   opacity: 0.8;
-  transition: opacity 0.1s; }
+  transition: opacity 0.1s;
+  font-size: 1.2rem;
+  transform: rotateY(0deg);
+  -ms-transform: rotateY(0deg);
+  /* IE 9 */
+  -webkit-transform: rotateY(0deg);
+  /* Opera, Chrome, and Safari */
+  transition: transform 0.5s; }
 
 .notes-hidden {
   opacity: 0.0;
   transition: opacity 0.1s; }
+
+.notes-rotateLeft {
+  transform: rotateY(15deg);
+  -ms-transform: rotateY(15deg);
+  /* IE 9 */
+  -webkit-transform: rotateY(15deg);
+  /* Opera, Chrome, and Safari */
+  font-size: 1.0rem;
+  transition: transform 0.5s; }
+
+.notes-rotateRight {
+  transform: rotateY(-15deg);
+  -ms-transform: rotateY(-15deg);
+  /* IE 9 */
+  -webkit-transform: rotateY(-15deg);
+  /* Opera, Chrome, and Safari */
+  font-size: 1.4rem;
+  transition: transform 0.5s; }
 
 #textbox {
   position: relative;
@@ -61,54 +86,13 @@ body {
   cursor: url("../img/write_cursor.gif"), auto; }
 
 ::-webkit-input-placeholder {
-  -webkit-animation: color-change 2s infinite;
-  animation: color-change 2s infinite;
+  color: #1C1A15;
   border-bottom: 1px dotted #5E5746; }
 
 ::-moz-placeholder {
   /* Firefox 19+ */
-  -moz-animation: color-change 2s infinite;
-  animation: color-change 2s infinite;
+  color: #1C1A15;
   border-bottom: 1px dotted #38342A; }
-
-@-webkit-keyframes color-change {
-  0% {
-    color: #1C1A15;
-    opacity: 0.6; }
-
-  50% {
-    color: #38342A;
-    opacity: 1.0; }
-
-  100% {
-    color: #1C1A15;
-    opacity: 0.6; } }
-
-@-moz-keyframes color-change {
-  0% {
-    color: #1C1A15;
-    opacity: 0.6; }
-
-  50% {
-    color: #38342A;
-    opacity: 1.0; }
-
-  100% {
-    color: #1C1A15;
-    opacity: 0.6; } }
-
-@keyframes color-change {
-  0% {
-    color: #1C1A15;
-    opacity: 0.6; }
-
-  50% {
-    color: #38342A;
-    opacity: 1.0; }
-
-  100% {
-    color: #1C1A15;
-    opacity: 0.6; } }
 
 .textcontainer-visible {
   width: 250px;
@@ -148,7 +132,7 @@ body {
   font-size: 1.3rem; }
 
 .instruction-visible {
-  bottom: 8%;
+  top: 8%;
   left: 0%;
   opacity: 0.6;
   transition: opacity 1.0s;
@@ -193,6 +177,21 @@ body {
 
 .cursor-write {
   cursor: url("../img/write_cursor.gif"), auto; }
+
+.cursor-rotate-top {
+  cursor: url("../img/rotate_top.gif"), auto; }
+
+.cursor-rotate-right {
+  cursor: url("../img/rotate_right.gif"), auto; }
+
+.cursor-rotate-bottom {
+  cursor: url("../img/rotate_bottom.gif"), auto; }
+
+.cursor-rotate-left {
+  cursor: url("../img/rotate_left.gif"), auto; }
+
+.cursor-translate {
+  cursor: url("../img/translate_cursor.gif"), auto; }
 
 .cursor-auto {
   cursor: auto; }

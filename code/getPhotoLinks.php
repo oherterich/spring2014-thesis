@@ -24,6 +24,11 @@
         $photo->caption = $metadata['caption'];
         $photo->time = $metadata['time'];
         $photo->name = $metadata['name'];
+        $photo->posX = $metadata['posX'];
+        $photo->posY = $metadata['posY'];
+        $photo->posZ = $metadata['posZ'];
+        $photo->rot = $metadata['rot'];
+
         array_push($data, $photo);
     }
 
