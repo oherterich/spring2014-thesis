@@ -76,9 +76,9 @@ $(document).ready(function(){
 			success : function(parsed_json) {
 				$.ajax({
 					type : "POST",
-					url : "savePhotos.php",
+					url : "php/savePhotos.php",
 					dataType : "jsonp",
-					data : encodeURI(parsed_json),
+					data : parsed_json,
 					complete : function() {
 					}
 				})

@@ -21,7 +21,7 @@ $(document).ready( function() {
     var response = '';
     $.ajax({ 
         type: "REQUEST",   
-        url: "getPhotoLinks.php",   
+        url: "php/getPhotoLinks.php",   
         async: false,
         success : function(links)
          {
@@ -32,7 +32,7 @@ $(document).ready( function() {
 
     $.ajax({ 
         type: "REQUEST",
-        url: "getComments.php",
+        url: "php/getComments.php",
         success : function(comments) {
             commentList = jQuery.parseJSON(comments);
         }
@@ -241,7 +241,7 @@ function saveComment( text, userid ) {
 
    $.ajax({
         type: "POST",
-        url: "saveComment.php",
+        url: "php/saveComment.php",
         dataType: "json",
         data : input,
         //Kind of weird, but we need to request all of the comments again because we should 
@@ -249,7 +249,7 @@ function saveComment( text, userid ) {
         success : function( response ) {
                 $.ajax({ 
                     type: "REQUEST",
-                    url: "getComments.php",
+                    url: "php/getComments.php",
                     success : function(comments) {
                         commentList = jQuery.parseJSON(comments);
                         clearNotes();
