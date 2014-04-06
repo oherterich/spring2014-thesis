@@ -5,7 +5,7 @@ var userList = new Array();
 
 var lights = new Array();
 
-for (var i = 0; i < 6; i++) {
+for (var i = 0; i < 5; i++) {
 	spotlight = new THREE.SpotLight(0xE8E0BE, 1.0, 10000.0, Math.PI/4, 10.0);
 	spotlight.castShadow = true;
 	spotlight.intensity = 0.0;
@@ -64,9 +64,20 @@ socket.on('user disconnect', function (data) {
 	}
 });
 
-socket.on('movement', function (data) {
+socket.on('light movement', function (data) {
 	updateLights( data.userid, data.lookX, data.lookY, data.camX, data.camY );
 });
+
+socket.on('pic movement', function (data) {
+	//console.log( data.id + ": " + data.posX + " | " + data.posY);
+	for( var i = 0; i < planeList.length; i++ ) {
+		if ( planeList[i].id == data.id ) {
+			planeList[i].pic.position.x = data.posX;
+			planeList[i].pic.position.y = data.posY;
+			planeList[i].pic.rotation.z = data.rot;
+		}
+	}
+})
 
 var newUser = function( userid, inst ) {
 	var user = new User( 0, 0, userid );
@@ -121,15 +132,16 @@ var newPhotos = function( data ) {
 
 		var vel = new THREE.Vector3( 0, 0, 0 );
 		var acc = new THREE.Vector3( 0, 0, 0 );
+		var id = data[i]['link'];
 
-		//console.log(planeList);
-		planeList.push( new Plane( plane, vel, acc ) );
+		planeList.push( new Plane( plane, vel, acc, id ) );
 		scene.add(plane);
 	}
 }
 
-function Plane( pic, vel, acc ) {
+function Plane( pic, vel, acc, id ) {
 	this.pic = pic;
 	this.vel = vel;
 	this.acc = acc;
+	this.id = id;
 }

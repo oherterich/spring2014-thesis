@@ -1,6 +1,6 @@
 
 //*********************************************************************
-var planeList = [];
+var planeList = []; //main array that holds all of our pictures/planes
 
 var w = window.innerWidth,
 	h = window.innerHeight;
@@ -153,7 +153,7 @@ var clickedLight = new THREE.SpotLight(0xE8E0BE, 0.0, 10000.0, Math.PI/4, 15.0);
 scene.add(clickedLight);
 
 //Big light to illuminate space (for testing purposes)
-var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 1.1);
+var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.1);
 scene.add(hemiLight);
 
 //Add something for the light to look at
@@ -272,10 +272,11 @@ var prevMouseX = 0;
 var prevMouseY = 0;
 
 
-function Plane( pic, vel, acc ) {
+function Plane( pic, vel, acc, id ) {
 	this.pic = pic;
 	this.vel = vel;
 	this.acc = acc;
+	this.id = id;
 }
 
 // INITIALIZE GROUND PLANES
@@ -313,8 +314,9 @@ for (var i = 0; i < photoLinks.length; i++) {
 
 	var vel = new THREE.Vector3( 0, 0, 0 );
 	var acc = new THREE.Vector3( 0, 0, 0 );
+	var id = photoLinks[i]['link'];
 
-	planeList.push( new Plane( plane, vel, acc ) );
+	planeList.push( new Plane( plane, vel, acc, id ) );
 	scene.add(plane);
 
 }
@@ -800,6 +802,8 @@ function slideImages() {
 						addRotateLeftCursor();
 					}
 				}
+
+				socket.emit('pic movement', { id: planeList[i].id, posX: planeList[i].pic.position.x, posY: planeList[i].pic.position.y, rot: planeList[i].pic.rotation.z });
 			}
 		}
 	}
@@ -1093,12 +1097,12 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
 
 function animate(t) {
 
-	//socket.emit( 'movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
-
 	/***************************************************************************************/
 	/***************************************STATE ZERO**************************************/
 	/***************************************************************************************/
 	if (state == 0) {
+		socket.emit( 'light movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
+
 		//Check to see if the camera has gone out of the boundary
 		checkCameraBoundary();
 

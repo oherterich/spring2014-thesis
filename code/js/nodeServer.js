@@ -11,6 +11,7 @@ var clients = [];
 var rooms = [];
 
 var maxPlayers = 6;
+var roomNum = 0;
 
 io.sockets.on( 'connection', function( client ) {
 
@@ -44,10 +45,14 @@ io.sockets.on( 'connection', function( client ) {
 	// 	client.broadcast.emit( 'user disconnect', { message: "A user has disconnected", userid: client.id } );
 	// });
 
-	// client.on('movement', function( data ) {
-	// 	//console.log( client.id + " - ( " + data.posX + ", " + data.posY + " )");
-	// 	client.broadcast.emit( 'movement', { userid: client.id, lookX: data.lookX, lookY: data.lookY, camX: data.camX, camY: data.camY });
-	// });
+	client.on('light movement', function( data ) {
+		//console.log( client.id + " - ( " + data.posX + ", " + data.posY + " )");
+		client.broadcast.to( client.room ).emit( 'light movement', { userid: client.id, lookX: data.lookX, lookY: data.lookY, camX: data.camX, camY: data.camY });
+	});
+
+	client.on('pic movement', function( data ) {
+		client.broadcast.to( client.room ).emit( 'pic movement', { id: data.id, posX: data.posX, posY: data.posY, rot: data.rot } );
+	});
 
 });
 
@@ -62,8 +67,10 @@ function joinRoom( client ) {
 			if ( io.sockets.clients( rooms[i] ).length >= maxPlayers) {
 				//If we're on the last room and it's full, we should create a new one.\
 				if ( i == rooms.length-1 ) {
-					var roomName = "room" + rooms.length;
+					var roomName = "room" + roomNum;
+					roomNum++;
 					client.join( roomName );
+					client.room = roomName;
 					rooms.push( roomName );
 					console.log( "new room!" );	
 				}			
@@ -78,6 +85,7 @@ function joinRoom( client ) {
 
 				//Join the room
 				client.join( rooms[i] );
+				client.room = roomName;
 				console.log( rooms[i] + " now has " + io.sockets.clients( rooms[i] ).length + " players!" );
 
 				//Tell everyone else that someone has joined.
@@ -87,8 +95,11 @@ function joinRoom( client ) {
 	}
 	//If we don't have a room yet, create one.
 	else {
-		var roomName = "room" + rooms.length;
+		roomNum = 0;
+		var roomName = "room" + roomNum;
+		roomNum++;
 		client.join( roomName );
+		client.room = roomName;
 		rooms.push( roomName );
 		console.log("first room!");
 	}
