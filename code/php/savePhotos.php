@@ -1,7 +1,7 @@
 <?php
-	$maxHoriz = 2560.0;
-	$maxVert = 1600.0;
-	$maxZ = 25.0;
+	$maxHoriz = 1920.0;
+	$maxVert = 1200.0;
+	$maxZ = 30.0;
 	$baseNumberX = mt_rand( ($maxHoriz * -1) + 500, $maxHoriz - 500 );
 	$baseNumberY = mt_rand( ($maxVert * -1) + 500, $maxVert - 500 );
 
@@ -43,10 +43,10 @@
 
 				global $baseNumberX, $baseNumberY, $maxZ;
 
-				$randX = generateFloat( $baseNumberX - 500, $baseNumberX + 500);
-				$randY = generateFloat( $baseNumberY - 500, $baseNumberY + 500);
+				$randX = generateFloat( $baseNumberX - 1100, $baseNumberX + 1100);
+				$randY = generateFloat( $baseNumberY - 800, $baseNumberY + 800);
 				$randZ = generateFloat( 0, $maxZ );
-				$rot = rand( -M_PI, M_PI );
+				$rot = generateFloat( -M_PI, M_PI );
 
 				//Insert the info into our database
 				$sql = "INSERT INTO Photos (photo_link, url, time, caption, name, posX, posY, posZ, rot) VALUES ('$uniqueId', '$imageUrl', '$time', '$caption', '$name', '$randX', '$randY', '$randZ', '$rot')";

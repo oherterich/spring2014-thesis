@@ -69,7 +69,7 @@ $(document).ready(function(){
 	 function getUserPhotos() {
 	 	showLoading();
 
-	 	var URL = "https://api.instagram.com/v1/users/" + userid + "/media/recent?access_token=" + hash;
+	 	var URL = "https://api.instagram.com/v1/users/" + userid + "/media/recent?count=12&access_token=" + hash;
 		$.ajax({
 			url : URL,
 			dataType : "jsonp",

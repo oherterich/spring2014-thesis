@@ -11,15 +11,15 @@ var state = 0;
 
 //Determines size of images (planes)
 var imageSize = 500;
-var maxZDepth = 25.0;
+var maxZDepth = 30.0;
 
 //Determine boundary percentage for moving camera
 var boundaryPct = 0.25;
 var outerBoundary = (imageSize*3) / 4;
 
 //Boundary for edges of world
-var horizBoundary = 2560;
-var vertBoundary = 1600;
+var horizBoundary = 1920;
+var vertBoundary = 1200;
 
 //Variable that controls the small rectangle in the HUD;
 var HUD = document.getElementById("HUD");
@@ -826,7 +826,7 @@ function setSelectedImage() {
 //This function moves the rectangle inside the HUD
 function setHUD() {
 	if (bMap) {
-		var horiz = map_range(camera.position.x, -horizBoundary, horizBoundary, 0, 256) - lightHUDSize/2;
+		var horiz = map_range(camera.position.x, -horizBoundary, horizBoundary, -lightHUDSize/2, 256+lightHUDSize/2) - lightHUDSize/2;
 		var vert = map_range(camera.position.y, vertBoundary, -vertBoundary, 0, 160) - lightHUDSize/2;
 
 		userPosition.style.left = horiz + "px";

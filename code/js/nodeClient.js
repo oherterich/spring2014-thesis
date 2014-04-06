@@ -5,7 +5,7 @@ var userList = new Array();
 
 var lights = new Array();
 
-for (var i = 0; i < 10; i++) {
+for (var i = 0; i < 6; i++) {
 	spotlight = new THREE.SpotLight(0xE8E0BE, 1.0, 10000.0, Math.PI/4, 10.0);
 	spotlight.castShadow = true;
 	spotlight.intensity = 0.0;
