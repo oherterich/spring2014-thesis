@@ -1,5 +1,6 @@
 
 //*********************************************************************
+var planeList = [];
 
 var w = window.innerWidth,
 	h = window.innerHeight;
@@ -278,10 +279,7 @@ function Plane( pic, vel, acc ) {
 }
 
 // INITIALIZE GROUND PLANES
-var planeList = new Array();
-
 for (var i = 0; i < photoLinks.length; i++) {
-//for (var i = 0; i < 50; i++) {
 	// var x = Math.random() * (horizBoundary*2) - horizBoundary;
 	// var y = Math.random() * (vertBoundary*2) - vertBoundary;
 	// var z = Math.random() * maxZDepth;
@@ -292,13 +290,7 @@ for (var i = 0; i < photoLinks.length; i++) {
 	var z = photoLinks[i]['posZ'] * 1;
 	var rot = photoLinks[i]['rot'] * 1;
 
-	//var w = Math.random() * 10;
-
 	var planeGeo = new THREE.PlaneGeometry(imageSize, imageSize, 10, 10);
-	var planeMat = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
-	
-	//var	rand = Math.floor(Math.random() * photoLinks.length);
-	//var rand = getRandomInt(photoLinks.length-18, photoLinks.length);
 	var texture = THREE.ImageUtils.loadTexture("instagram_img/" + photoLinks[i]['link'] + ".jpg");
 	var rand2 = Math.floor(Math.random() * 5);
 	var rough = THREE.ImageUtils.loadTexture("img/texture_" + rand2 + ".jpg");
@@ -323,12 +315,11 @@ for (var i = 0; i < photoLinks.length; i++) {
 	var acc = new THREE.Vector3( 0, 0, 0 );
 
 	planeList.push( new Plane( plane, vel, acc ) );
+	scene.add(plane);
+
 }
 
-for (var i = 0; i < planeList.length; i++) {
-	scene.add(planeList[i].pic);
-}
-	console.log(planeList);
+console.log(planeList);
 
 
 //CREATE INITIAL BACKGROUND TEXTURE PLANE
@@ -1102,7 +1093,7 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
 
 function animate(t) {
 
-	// socket.emit( 'movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
+	//socket.emit( 'movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
 
 	/***************************************************************************************/
 	/***************************************STATE ZERO**************************************/

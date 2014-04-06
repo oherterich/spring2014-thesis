@@ -31,6 +31,4 @@
 	</section>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>	
 	<script type="text/javascript" src="js/main-ck.js"></script>
-	<script src="js/node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>
-	<script src="js/nodeClient.js"></script>
 </body>

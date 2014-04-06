@@ -34,23 +34,25 @@
   		if ($isUnique && $imageUrl != "") {
 	  		if (strlen($imageUrl) > 1) {
 	  			$image = file_get_contents($imageUrl);
-				file_put_contents("instagram_img/" . $uniqueId . ".jpg", $image);
+				file_put_contents("../instagram_img/" . $uniqueId . ".jpg", $image);
 			}
 
-				$time = date('m/d/Y', $d['created_time']);
-				$caption = $d['caption']['text'];
-				$name = $d['user']['full_name'];
 
-				global $baseNumberX, $baseNumberY, $maxZ;
+			$userid = $d['user']['id'];
+			$time = date('m/d/Y', $d['created_time']);
+			$caption = $d['caption']['text'];
+			$name = $d['user']['full_name'];
 
-				$randX = generateFloat( $baseNumberX - 1100, $baseNumberX + 1100);
-				$randY = generateFloat( $baseNumberY - 800, $baseNumberY + 800);
-				$randZ = generateFloat( 0, $maxZ );
-				$rot = generateFloat( -M_PI, M_PI );
+			global $baseNumberX, $baseNumberY, $maxZ;
 
-				//Insert the info into our database
-				$sql = "INSERT INTO Photos (photo_link, url, time, caption, name, posX, posY, posZ, rot) VALUES ('$uniqueId', '$imageUrl', '$time', '$caption', '$name', '$randX', '$randY', '$randZ', '$rot')";
-				$query = mysql_query($sql);
+			$randX = generateFloat( $baseNumberX - 1100, $baseNumberX + 1100);
+			$randY = generateFloat( $baseNumberY - 800, $baseNumberY + 800);
+			$randZ = generateFloat( 0, $maxZ );
+			$rot = generateFloat( -M_PI, M_PI );
+
+			//Insert the info into our database
+			$sql = "INSERT INTO Photos (userid, photo_link, url, time, caption, name, posX, posY, posZ, rot) VALUES ('$userid', '$uniqueId', '$imageUrl', '$time', '$caption', '$name', '$randX', '$randY', '$randZ', '$rot')";
+			$query = mysql_query($sql);
 		}
 	}
 

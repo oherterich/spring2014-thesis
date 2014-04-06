@@ -15,14 +15,19 @@ var rightArrow = document.getElementById("right-arrow");
 var instruction = document.getElementsByClassName("instruction");
 instruction[0].style.opacity = 0.6;
 
+var url = document.location.href;
 
 //When the page loads, we want to get our photo links and notes from the database
 $(document).ready( function() {
     var response = '';
+    var instId = url.split('?')[1];
+
     $.ajax({ 
-        type: "REQUEST",   
+        type: "GET",   
         url: "php/getPhotoLinks.php",   
         async: false,
+        dataType: "text",
+        data: instId,
         success : function(links)
          {
             response = links;

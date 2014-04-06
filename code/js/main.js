@@ -63,8 +63,6 @@ $(document).ready(function(){
 			getUserPhotos();
 		}
 	});
-
-	//getUserId();
 	
 	 function getUserPhotos() {
 	 	showLoading();
@@ -83,7 +81,7 @@ $(document).ready(function(){
 					}
 				})
 				.always(function (data) {
-					window.location="three.html";
+					window.location="three.html?" + parsed_json['data'][0]['user']['id'];
 				});
 			}
 		});

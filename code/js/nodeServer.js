@@ -16,40 +16,14 @@ io.sockets.on( 'connection', function( client ) {
 
 	clients.push(client);
 
-	//If we already have a room
-	if ( rooms.length > 0 ) {
-		//Loop through all of our rooms.
-		for ( var i = 0; i < rooms.length; i++ ) {
-			//Check to see if they've reached the max number of players.
-			if ( io.sockets.clients( rooms[i] ).length >= maxPlayers) {
-				//If we're on the last room and it's full, we should create a new one.\
-				if ( i == rooms.length-1 ) {
-					var roomName = "room" + rooms.length;
-					client.join( roomName );
-					rooms.push( roomName );
-					console.log( "new room!" );	
-				}			
-			}
-			//If we haven't reached the max number of players, join that room.
-			else {
-				client.join( rooms[i] );
-				console.log( rooms[i] + " now has " + io.sockets.clients( rooms[i] ).length + " players!" );
-				
-				for (var i = 0; i < io.sockets.clients( rooms[i] ).length; i++) {
-					client.emit( 'init user', { userid: io.sockets.clients( rooms[i] )[0].id } );
-				}
+	client.on( 'inst_id', function( data ) {
+		client.inst = data.inst;
+		console.log (client.inst);
 
-				//socket.broadcast.to( rooms[i] ).emit( 'init user', { userid: io.sockets.clients( rooms[i] )[0].id } );
-			}
-		}
-	}
-	//If we don't have a room yet, create one.
-	else {
-		var roomName = "room" + rooms.length;
-		client.join( roomName );
-		rooms.push( roomName );
-		console.log("first room!");
-	}
+		joinRoom( client );
+	});
+
+	
 
 	// client.emit('init', { userid: client.id, users: clients.length});
 
@@ -78,6 +52,47 @@ io.sockets.on( 'connection', function( client ) {
 });
 
 server.listen( 8080 );
+
+function joinRoom( client ) {
+	//If we already have a room
+	if ( rooms.length > 0 ) {
+		//Loop through all of our rooms.
+		for ( var i = 0; i < rooms.length; i++ ) {
+			//Check to see if they've reached the max number of players.
+			if ( io.sockets.clients( rooms[i] ).length >= maxPlayers) {
+				//If we're on the last room and it's full, we should create a new one.\
+				if ( i == rooms.length-1 ) {
+					var roomName = "room" + rooms.length;
+					client.join( roomName );
+					rooms.push( roomName );
+					console.log( "new room!" );	
+				}			
+			}
+			//If we haven't reached the max number of players, join that room.
+			else {
+				//Tell our newly joined player who is in the room.
+				//We do this before joining the room so that we don't send a message about ourselves.
+				for (var j = 0; j < io.sockets.clients( rooms[i] ).length; j++) {
+					client.emit( 'init user', { userid: io.sockets.clients( rooms[i] )[j].id, inst: io.sockets.clients( rooms[i] )[j].inst  } );
+				}
+
+				//Join the room
+				client.join( rooms[i] );
+				console.log( rooms[i] + " now has " + io.sockets.clients( rooms[i] ).length + " players!" );
+
+				//Tell everyone else that someone has joined.
+				client.broadcast.to( rooms[i] ).emit( 'init user', { userid: client.id, inst: client.inst } );
+			}
+		}
+	}
+	//If we don't have a room yet, create one.
+	else {
+		var roomName = "room" + rooms.length;
+		client.join( roomName );
+		rooms.push( roomName );
+		console.log("first room!");
+	}
+}
 
 function s4() {
   return Math.floor((1 + Math.random()) * 0x10000)

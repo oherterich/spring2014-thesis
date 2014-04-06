@@ -16,7 +16,7 @@
     }
 
     //First SQL query
-    $sql = "SELECT * FROM Photos WHERE name = 'Default' OR userid = " . key($instId);
+    $sql = "SELECT * FROM Photos WHERE userid = " . key($instId);
     $query = mysql_query($sql);
 
     //Go through the Photo table and add the info to an array.
