@@ -54,6 +54,10 @@ io.sockets.on( 'connection', function( client ) {
 		client.broadcast.to( client.room ).emit( 'pic movement', { id: data.id, posX: data.posX, posY: data.posY, rot: data.rot } );
 	});
 
+	client.on('selected photo', function( data ) {
+		client.broadcast.to( client.room ).emit( 'ping', { posX: data.posX, posY: data.posY });
+	})
+
 });
 
 server.listen( 8080 );

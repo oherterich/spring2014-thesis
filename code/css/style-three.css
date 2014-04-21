@@ -26,9 +26,47 @@ body {
   height: 45px;
   background: url("../img/HUD_light.png") no-repeat center center; }
 
-#user-position:hover {
-  cursor: pointer; }
+#ping {
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  top: 0px;
+  left: 0px;
+  -webkit-box-shadow: 0 0 5px 5px #cc2222;
+  box-shadow: 0 0 5px 5px #cc2222;
+  -webkit-transform: scale(0, 0); }
 
+.ping-animation {
+  -webkit-animation-timing-function: ease-in;
+  animation-iteration-count: 1;
+  -webkit-animation: blink 0.6s;
+  /* Safari 4+ */
+  -moz-animation: blink 0.6s;
+  /* Fx 5+ */ }
+
+@-webkit-keyframes blink {
+  0% {
+    -webkit-transform: scale(0, 0); }
+
+  55% {
+    -webkit-transform: scale(1, 1); }
+
+  100% {
+    -webkit-transform: scale(0, 0); } }
+
+@-moz-keyframes blink {
+  0% {
+    transform: scale(0, 0); }
+
+  55% {
+    transform: scale(1, 1); }
+
+  100% {
+    transform: scale(0, 0); } }
+
+/*#user-position:hover {
+    cursor: pointer;
+}*/
 #notes {
   position: relative; }
   #notes p {

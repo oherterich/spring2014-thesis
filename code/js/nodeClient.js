@@ -1,8 +1,6 @@
 var socket = io.connect( 'http://localhost:8080' );
 
 var userList = new Array();
-
-
 var lights = new Array();
 
 for (var i = 0; i < 5; i++) {
@@ -77,7 +75,21 @@ socket.on('pic movement', function (data) {
 			planeList[i].pic.rotation.z = data.rot;
 		}
 	}
-})
+});
+
+socket.on('ping', function (data) {
+	ping.classList.remove('ping-animation');
+	ping.offsetWidth = ping.offsetWidth;
+	ping.classList.add('ping-animation');
+
+	var horiz = map_range(data.posX, -1920, 1920, 0, 256);
+	var vert = map_range(data.posY, -1200, 1200, 0, 160);
+
+	ping.style.left = horiz + 'px';
+	ping.style.top = vert + 'px';
+
+	chime.play();
+});
 
 var newUser = function( userid, inst ) {
 	var user = new User( 0, 0, userid );
@@ -136,6 +148,9 @@ var newPhotos = function( data ) {
 
 		planeList.push( new Plane( plane, vel, acc, id ) );
 		scene.add(plane);
+
+		photoLinks.push( data[i] );
+		console.log( photoLinks );
 	}
 }
 
@@ -144,4 +159,9 @@ function Plane( pic, vel, acc, id ) {
 	this.vel = vel;
 	this.acc = acc;
 	this.id = id;
+}
+
+//Simple function to map values (similar to Processing's map() function)
+function map_range(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }

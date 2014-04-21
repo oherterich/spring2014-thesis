@@ -4,6 +4,7 @@ var photoLinks;
 var commentList;
 var HUD = document.getElementById("HUD");
 var userPosition = document.getElementById("user-position");
+var ping = document.getElementById("ping");
 var notes = document.getElementById("notes");
 var textContainer = document.getElementById("textContainer");
 var textbox = document.getElementById("textbox");
@@ -14,6 +15,18 @@ var leftArrow = document.getElementById("left-arrow");
 var rightArrow = document.getElementById("right-arrow");
 var instruction = document.getElementsByClassName("instruction");
 instruction[0].style.opacity = 0.6;
+
+var chime = new Audio('sound/chime.mp3');
+var ambient = new Audio('sound/ambient.mp3');
+var turnPaper = new Audio('sound/turnpaper.mp3');
+var dropPaper = new Audio('sound/droppaper.mp3');
+var pickPaper = new Audio('sound/pickpaper.mp3');
+
+ambient.loop = true;
+ambient.play();
+
+
+
 
 var url = document.location.href;
 
@@ -293,15 +306,15 @@ userPosition.addEventListener('mouseout', function(evt) {
     bHUDActive = false;
 });
 
-userPosition.addEventListener('mousedown', function(evt) {
-    bHUDDraggable = true;
-    evt.preventDefault();
-});
+// userPosition.addEventListener('mousedown', function(evt) {
+//     bHUDDraggable = true;
+//     evt.preventDefault();
+// });
 
-userPosition.addEventListener('mouseup', function(evt) {
-    bHUDDraggable = false;
-});
+// userPosition.addEventListener('mouseup', function(evt) {
+//     bHUDDraggable = false;
+// });
 
-userPosition.addEventListener('click', function(evt) {
-    bHUDDraggable = false;
-});
+// userPosition.addEventListener('click', function(evt) {
+//     bHUDDraggable = false;
+// });

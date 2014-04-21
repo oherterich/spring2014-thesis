@@ -325,8 +325,8 @@ console.log(planeList);
 
 
 //CREATE INITIAL BACKGROUND TEXTURE PLANE
-var planeGeo = new THREE.PlaneGeometry(7280,3700,10,10);
-var texture = THREE.ImageUtils.loadTexture("img/background_texture_large.jpg");
+var planeGeo = new THREE.PlaneGeometry(4800,3000,10,10);
+var texture = THREE.ImageUtils.loadTexture("img/background_texture_1920.jpg");
 var planeMat = new THREE.MeshPhongMaterial({ map: texture });
 var backgroundTexture = new THREE.Mesh(planeGeo, planeMat);
 backgroundTexture.position.z = -1;
@@ -377,6 +377,8 @@ function changeTexture() {
 /***************************************************************************************************************/
 
 document.body.addEventListener('mousemove', function (evt) {
+	evt.preventDefault();
+
 	moveInfo.x = evt.clientX;
   	moveInfo.y = evt.clientY;
 
@@ -417,6 +419,7 @@ window.addEventListener('keypress', function (evt) {
 
 //Listen for clicks
 container.addEventListener('click', function (evt) {
+	evt.preventDefault();
 	//If we're in the exploration state, we want to check whether or not the user has clicked a photo.
 	if (state == 0) {
 		if (mouseDownCount < 10) {
@@ -434,6 +437,8 @@ container.addEventListener('click', function (evt) {
 }, false);
 
 container.addEventListener("mousedown", function (evt) {
+	evt.preventDefault();
+
   ++mouseDown;
   mouseDownCount = 0;
 
@@ -443,6 +448,8 @@ container.addEventListener("mousedown", function (evt) {
 }, false);
 
 container.addEventListener("mouseup", function (evt) {
+	evt.preventDefault();
+
 	--mouseDown;
 	
 	//Reset some of our drag things when we release the mouse
@@ -548,6 +555,16 @@ function checkPicClick( id ) {
 			metaContext_caption.restore(); //Let's get it back
 			wrapText(metaContext_caption, metaDataText_caption, getRandomInt(20,30), getRandomInt(200,220), 400, 32 );
 			metaDataTexture_caption.needsUpdate = true; //Update dat texture
+
+
+
+			//We're also going to send a signal to the other users that you've picked up the photo.
+	        posX = planeList[selectedImage].pic.position.x;
+	        posY = planeList[selectedImage].pic.position.y;
+
+	        socket.emit( 'selected photo', { posX: posX, posY: posY } );
+
+	        pickPaper.play();
 		}
 	}
 }
@@ -556,6 +573,8 @@ function manageSelectedPhotoClick(x, y) {
 
 	if (x < w/2 - outerBoundary || x > w/2 + outerBoundary || y < h/2 - imageSize/2 || y > h/2 + imageSize/2) {
 		state = 0;
+
+		dropPaper.play();
 
 		//Reset rotations
 		metaPlane.rotation.y = Math.PI;
@@ -594,6 +613,8 @@ function manageSelectedPhotoClick(x, y) {
 	}
 
 	if (x > w / 2 + imageSize / 3 && x < w / 2 + outerBoundary) {
+		turnPaper.play();
+
 		if (bIsFront) {
 			//rotateImage(1);
 
@@ -629,6 +650,8 @@ function manageSelectedPhotoClick(x, y) {
 	}
 
 	if (x < w / 2 - imageSize / 3 && x > w / 2 - outerBoundary) {
+		turnPaper.play();
+
 		if (bIsFront) {
 			//rotateImage(1);
 
@@ -1101,7 +1124,7 @@ function animate(t) {
 	/***************************************STATE ZERO**************************************/
 	/***************************************************************************************/
 	if (state == 0) {
-		socket.emit( 'light movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
+		//socket.emit( 'light movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
 
 		//Check to see if the camera has gone out of the boundary
 		checkCameraBoundary();
@@ -1129,8 +1152,8 @@ function animate(t) {
 		light.angle = angle;
 		light.exponent = exponent;
 
-		backgroundTexture.position.x = camera.position.x;
-		backgroundTexture.position.y = camera.position.y;
+		//backgroundTexture.position.x = camera.position.x;
+		//backgroundTexture.position.y = camera.position.y;
 
 		light.position.set( camera.position.x, camera.position.y, camera.position.z );
 		light.target = lookAtThis;
