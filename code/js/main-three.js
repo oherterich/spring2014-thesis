@@ -45,6 +45,7 @@ $(document).ready( function() {
          {
             response = links;
             photoLinks = jQuery.parseJSON(response);
+            console.log(photoLinks);
          }
     });
 

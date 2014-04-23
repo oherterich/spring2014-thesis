@@ -292,7 +292,14 @@ for (var i = 0; i < photoLinks.length; i++) {
 	var rot = photoLinks[i]['rot'] * 1;
 
 	var planeGeo = new THREE.PlaneGeometry(imageSize, imageSize, 10, 10);
-	var texture = THREE.ImageUtils.loadTexture("instagram_img/" + photoLinks[i]['link'] + ".jpg");
+
+	if ( i < 39 ) {
+		var texture = THREE.ImageUtils.loadTexture("default_img/" + photoLinks[i]['link'] + ".jpg");
+	}
+	else {
+		var texture = THREE.ImageUtils.loadTexture("instagram_img/" + photoLinks[i]['link'] + ".jpg");
+	}
+
 	var rand2 = Math.floor(Math.random() * 5);
 	var rough = THREE.ImageUtils.loadTexture("img/texture_" + rand2 + ".jpg");
 	var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: rough, bumpScale: 5 });

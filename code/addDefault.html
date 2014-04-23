@@ -1,0 +1,141 @@
+<html>
+	<head>
+		<style>
+			img {
+				width: 30%;
+				margin: 1.5%;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="add">
+			<h3>Search for tags</h3>
+			<input id="tag-input" type="text">
+			<button id="search">Search</button>
+			<a id="connect-link" href="#">Login</a>
+			<div id="photos">
+			</div>
+		</div>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>	
+		<script>
+			$(document).ready(function(){
+
+			var clientid = "afc4f345b34946d98cfbfcebe9581461";
+			var redirectURL = "http://macaroni.local/GradSchool/ThesisSpring/spring2014-thesis/code/addDefault.html";
+			var authURL = "https://api.instagram.com/oauth/authorize/?client_id=" + clientid + "&redirect_uri=" + redirectURL + "&response_type=token";
+
+			var instagramLogin = document.querySelector('#connect-link');
+			instagramLogin.href = authURL;
+
+			var photos = document.getElementById('photos');
+			var search = document.getElementById('search');
+			var tagInput = document.getElementById('tag-input');
+
+			var numPagination = 0;
+
+			search.addEventListener('click', function(evt) {
+				photos.innerHTML = '';
+				numPagination = 0;
+				if (photoList.length > 0) { photoList.splice(0, photoList.length); }
+				var tag = tagInput.value;
+				var URL = "https://api.instagram.com/v1/tags/" + tag + "/media/recent?access_token=" + hash;
+				getPhotos( URL, tag );
+			})
+
+			function getHashValue(key) {
+			  return location.hash.split('=')[1];
+			}
+
+			// usage
+			var hash = getHashValue('hash');
+			console.log("access token: " + hash);
+
+			if ( hash ) {
+				instagramLogin.style.display = "none";
+			}
+
+
+			//picture object
+			var Photo = function(link, userid, id, time, caption, name) {
+				this.link = link;
+				this.userid = userid;
+				this.id = id;
+				this.time = time;
+				this.caption = caption;
+				this.name = name;
+			}
+
+			var photoList = [];
+
+			function getPhotos( url, tag ) {
+				$.ajax({
+					url : url,
+					dataType : "jsonp",
+					success : function(parsed_json) {
+						console.log(parsed_json);
+						displayPhotos(parsed_json);
+						//var nextURL = parsed_json['pagination']['next_url'];
+						var nextURL = "https://api.instagram.com/v1/tags/" + tag + "/media/recent?access_token=" + hash + "&" + parsed_json['pagination']['next_max_tag_id'];
+						console.log(nextURL);
+						if ( numPagination < 5 ) {
+							numPagination++;
+							getPhotos( nextURL, tag );
+						}
+						else {
+							var allImg = document.getElementsByTagName('img');
+							for ( var i = 0; i < allImg.length; i++ ) {
+								allImg[i].id = i;
+								allImg[i].addEventListener('click', function( evt ) {
+									savePhoto( photoList[ this.id ] );
+								});
+							}
+						}
+					}
+				});
+			}
+
+			function savePhoto( photo ) {
+				$.ajax({
+					type : "POST",
+					url : "php/saveDefaultPhotos.php",
+					dataType : "jsonp",
+					data : photo,
+					success : function( response ) {
+						console.log(response);
+					}
+				});
+			}
+
+
+			function displayPhotos( parsed_json ) {
+				for ( var i = 0; i < parsed_json['data'].length; i++ ) {
+					if ( parsed_json['data'][i]['images']['low_resolution']['url'] ) {
+						var link = parsed_json['data'][i]['images']['standard_resolution']['url'];
+					} else { var link = ""; }
+
+					var userid = parsed_json['data'][i]['user']['id'];
+
+					var id = parsed_json['data'][i]['id'];
+
+					var time = parsed_json['data'][i]['created_time'];
+
+					if ( parsed_json['data'][i]['caption'] != null ) {
+						var caption = parsed_json['data'][i]['caption']['text'];
+					} else { var caption = ""; }
+
+					var name = parsed_json['data'][i]['user']['full_name'];
+
+					var pic = document.createElement('img');
+					pic.src = parsed_json['data'][i]['images']['low_resolution']['url'];
+					photos.appendChild(pic);
+
+
+					var p = new Photo( link, userid, id, time, caption, name );
+					photoList.push( p );
+				}
+			}
+			});
+		</script>
+	</body>
+</html>

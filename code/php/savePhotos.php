@@ -2,8 +2,8 @@
 	$maxHoriz = 1920.0;
 	$maxVert = 1200.0;
 	$maxZ = 30.0;
-	$baseNumberX = mt_rand( ($maxHoriz * -1) + 500, $maxHoriz - 500 );
-	$baseNumberY = mt_rand( ($maxVert * -1) + 500, $maxVert - 500 );
+	$baseNumberX = 0;
+	$baseNumberY = 0;
 
 	$mysql = mysql_connect('localhost', 'root', 'root');
 	mysql_select_db('Thesis', $mysql);
