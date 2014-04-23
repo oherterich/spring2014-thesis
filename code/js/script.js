@@ -153,7 +153,7 @@ var clickedLight = new THREE.SpotLight(0xE8E0BE, 0.0, 10000.0, Math.PI/4, 15.0);
 scene.add(clickedLight);
 
 //Big light to illuminate space (for testing purposes)
-var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.1);
+var hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xFFFFFF, 0.135);
 scene.add(hemiLight);
 
 //Add something for the light to look at
@@ -554,6 +554,21 @@ function checkPicClick( id ) {
 			if (metaDataText_caption == "n") { //We need this because blank captions are set to say "n" by default
 				metaDataText_caption = "";
 			}
+
+			//We want to take out the hashtags in our captions because they are obnoxious and jarring.
+			var noHashTags = metaDataText_caption.split(" ");
+			for ( var s = 0; s < noHashTags.length; s++ ) {
+				if ( noHashTags[s][0] == "#" ) {
+					noHashTags.splice(s, 1); //If there's a hashtag at the start of the word, remove that word.
+					s--;
+				}
+				else {
+					noHashTags[s] = noHashTags[s] + " "; //If the word is ok, add a space at the end.
+				}
+			}
+			metaDataText_caption = noHashTags.join(""); //Put the string back together.
+
+
 			var metrics = metaContext_caption.measureText(metaDataText_caption);
 			var width = metrics.width;
 			metaContext_caption.save(); //We need to clear the canvas properly, so we do some crazy stuff.
@@ -699,17 +714,17 @@ function moveCamera(x, y) {
 	var disX = Math.abs(w / 2 - x);
 	var disY = Math.abs(h / 2 - y);
 
-	if (x < w * boundaryPct) {
+	if (x < w * boundaryPct && camera.position.x > -horizBoundary + w/2) {
 		camSpeedX = map_range(disX, w * boundaryPct, w/2, 0, -panMaxSpeed);
 	}
-	else if (x > w - w * boundaryPct) {
+	else if (x > w - w * boundaryPct && camera.position.x < horizBoundary - w/2) {
 		camSpeedX = map_range(disX, w * boundaryPct, w/2, 0, panMaxSpeed);
 	}
 	
-	if (y < h * boundaryPct) {
+	if (y < h * boundaryPct && camera.position.y > -vertBoundary + h/2) {
 		camSpeedY = map_range(disY, h * boundaryPct, h/2, 0, panMaxSpeed);
 	}
-	else if (y > h - h * boundaryPct) {
+	else if (y > h - h * boundaryPct && camera.position.y < vertBoundary - h/2) {
 		camSpeedY = map_range(disY, h * boundaryPct, h/2, 0, -panMaxSpeed);
 	}
 }
