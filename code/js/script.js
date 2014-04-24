@@ -44,7 +44,7 @@ var bIsFront = true;
 var bTextboxActive = false;
 
 //We need to know if we have ever displayed the instructions before.
-var bFirstTimeNoteInstruction = true;
+var bFirstTimeScrollInstruction = true;
 var bFirstTimeClickInstruction = true;
 
 //Stuff for animating plane, light, etc.
@@ -93,13 +93,18 @@ var pickRaycaster = new THREE.Raycaster();
 //Set up renderer
 var renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(w, h);
-
 renderer.setClearColorHex(0x020202, 1.0);
 renderer.clear();
 
 //Add the renderer to the page
 var container = document.getElementById("container");
 container.appendChild(renderer.domElement);
+
+//For stats/frame rate
+var stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.top = '0px';
+	container.appendChild( stats.domElement );
 
 //Variables for camera
 var  FOV = 45,
@@ -165,10 +170,17 @@ scene.add(lookAtThis);
 var prevLookAtThis = new THREE.Vector3();
 
 //enable shadows on the renderer
-renderer.shadowMapEnabled = true;
+//renderer.shadowMapEnabled = true;
+//renderer.shadowMapCullFace = THREE.CullFaceBack; //not sure why this is here, but it helps.
 
 //enable shadows for a light
-light.castShadow = true;
+// light.castShadow = true;
+// light.shadowMapWidth = 512;
+// light.shadowMapHeight = 512;
+// light.shadowCameraNear = 10;
+// light.shadowCameraFar = 2000;
+// light.shadowCameraFov = 60;
+// light.shadowBias = -0.001;
 // light.shadowCameraNear = 0;
 // light.shadowCameraFar = 1600;
 // light.shadowCameraFov = 45;
@@ -300,13 +312,14 @@ for (var i = 0; i < photoLinks.length; i++) {
 		var texture = THREE.ImageUtils.loadTexture("instagram_img/" + photoLinks[i]['link'] + ".jpg");
 	}
 
-	var rand2 = Math.floor(Math.random() * 5);
-	var rough = THREE.ImageUtils.loadTexture("img/texture_" + rand2 + ".jpg");
-	var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: rough, bumpScale: 5 });
-
 	// var c = new THREE.Color( 0xFFFFFF );
 	// c.setRGB( Math.random(), Math.random(), Math.random() );
 	// var material = new THREE.MeshLambertMaterial({ color: c });
+
+	//var rand2 = Math.floor(Math.random() * 5);
+	//var rough = THREE.ImageUtils.loadTexture("img/texture_" + rand2 + ".jpg");
+	//var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: rough, bumpScale: 5 });
+	var material = new THREE.MeshPhongMaterial({ map: texture });
 
 	var plane = new THREE.Mesh(planeGeo, material);
 
@@ -327,9 +340,6 @@ for (var i = 0; i < photoLinks.length; i++) {
 	scene.add(plane);
 
 }
-
-console.log(planeList);
-
 
 //CREATE INITIAL BACKGROUND TEXTURE PLANE
 var planeGeo = new THREE.PlaneGeometry(4800,3000,10,10);
@@ -458,6 +468,7 @@ container.addEventListener("mouseup", function (evt) {
 	evt.preventDefault();
 
 	--mouseDown;
+	mouseDown = 0;
 	
 	//Reset some of our drag things when we release the mouse
 	dragState = -1;
@@ -471,6 +482,17 @@ container.addEventListener('mousewheel', function (evt) {
 	if (state == 0) {
 		var zoom = map_range( evt.wheelDeltaY, -500, 500, -50, 50);
 		camera.position.z += zoom;
+
+
+		if (instruction[2].style.opacity > 0.0) {
+			instruction[2].style.opacity -= 0.03;
+			console.log(instruction[2].style.opacity);
+			if (instruction[2].style.opacity <= 0.01){
+				instruction[2].style.opacity = 0;
+				removeInstruction(2);
+			}
+		}
+
 	}
 });
 
@@ -630,8 +652,10 @@ function manageSelectedPhotoClick(x, y) {
 		//Set our boolean to its "front" state, because when we first click it always faces front.
 		bIsFront = true;
 
-		//Remove our "leave notes" instruction box if we click outside
-		removeInstruction(2);
+		if (bFirstTimeScrollInstruction) {
+			addInstruction(2);
+			bFirstTimeScrollInstruction = false;
+		}
 	}
 
 	if (x > w / 2 + imageSize / 3 && x < w / 2 + outerBoundary) {
@@ -648,11 +672,6 @@ function manageSelectedPhotoClick(x, y) {
 			addTextContainer();
 			addTextbox();
 			createNotes(photoLinks[selectedImage]['link']);
-
-			if (bFirstTimeNoteInstruction) {
-				addInstruction(2);
-				bFirstTimeNoteInstruction = false;
-			}
 		}
 
 		else {
@@ -685,11 +704,6 @@ function manageSelectedPhotoClick(x, y) {
 			addTextContainer();
 			addTextbox();
 			createNotes(photoLinks[selectedImage]['link']);
-
-			if (bFirstTimeNoteInstruction) {
-				addInstruction(2);
-				bFirstTimeNoteInstruction = false;
-			}
 		}
 
 		else {
@@ -714,17 +728,17 @@ function moveCamera(x, y) {
 	var disX = Math.abs(w / 2 - x);
 	var disY = Math.abs(h / 2 - y);
 
-	if (x < w * boundaryPct && camera.position.x > -horizBoundary + w/2) {
+	if (x < w * boundaryPct && camera.position.x >= -horizBoundary + w/2) {
 		camSpeedX = map_range(disX, w * boundaryPct, w/2, 0, -panMaxSpeed);
 	}
-	else if (x > w - w * boundaryPct && camera.position.x < horizBoundary - w/2) {
+	else if (x > w - w * boundaryPct && camera.position.x <= horizBoundary - w/2) {
 		camSpeedX = map_range(disX, w * boundaryPct, w/2, 0, panMaxSpeed);
 	}
 	
-	if (y < h * boundaryPct && camera.position.y > -vertBoundary + h/2) {
+	if (y < h * boundaryPct && camera.position.y >= -vertBoundary + h/2) {
 		camSpeedY = map_range(disY, h * boundaryPct, h/2, 0, panMaxSpeed);
 	}
-	else if (y > h - h * boundaryPct && camera.position.y < vertBoundary - h/2) {
+	else if (y > h - h * boundaryPct && camera.position.y <= vertBoundary - h/2) {
 		camSpeedY = map_range(disY, h * boundaryPct, h/2, 0, -panMaxSpeed);
 	}
 }
@@ -793,15 +807,21 @@ function pickImage() {
 	if ( intersects.length > 0 ) {
 		INTERSECTED = intersects[ 0 ].object;
 
+		addAutoCursor();
+
 		for (var i = 0; i < planeList.length; i++) {
 			if (planeList[i].pic.id == INTERSECTED.id) {
 				var d = lineLength( lookAtThis.position.x, lookAtThis.position.y, planeList[i].pic.position.x, planeList[i].pic.position.y );
 				
 				if ( d < imageSize / 2 ) {
 					dragState = 0;
+					addTranslateCursor();
 				}
 				else {
 					dragState = 1;
+
+					//We should also change the cursor.
+					checkRotateCursor( i );
 				}
 			}
 		}
@@ -834,18 +854,7 @@ function slideImages() {
 					planeList[i].pic.rotation.z += angleC;
 
 					//We should also change the cursor.
-					if ( lookAtThis.position.x < planeList[i].pic.position.x && lookAtThis.position.y >= planeList[i].pic.position.y) {
-						addRotateTopCursor();
-					}
-					else if ( lookAtThis.position.x > planeList[i].pic.position.x && lookAtThis.position.y >= planeList[i].pic.position.y) {
-						addRotateRightCursor();
-					}
-					else if ( lookAtThis.position.x > planeList[i].pic.position.x && lookAtThis.position.y < planeList[i].pic.position.y) {
-						addRotateBottomCursor();
-					}
-					else if ( lookAtThis.position.x < planeList[i].pic.position.x && lookAtThis.position.y < planeList[i].pic.position.y) {
-						addRotateLeftCursor();
-					}
+					checkRotateCursor( i );
 				}
 
 				socket.emit('pic movement', { id: planeList[i].id, posX: planeList[i].pic.position.x, posY: planeList[i].pic.position.y, rot: planeList[i].pic.rotation.z });
@@ -900,6 +909,21 @@ function checkTextbox() {
 	if (document.activeElement.nodeName == "TEXTAREA" || document.activeElement.nodeName == "INPUT") {
 		bTextboxActive = true;
 	}
+}
+
+function checkRotateCursor( i ) {
+	if ( lookAtThis.position.x < planeList[i].pic.position.x && lookAtThis.position.y >= planeList[i].pic.position.y) {
+		addRotateTopCursor();
+	}
+	else if ( lookAtThis.position.x > planeList[i].pic.position.x && lookAtThis.position.y >= planeList[i].pic.position.y) {
+		addRotateRightCursor();
+	}
+	else if ( lookAtThis.position.x > planeList[i].pic.position.x && lookAtThis.position.y < planeList[i].pic.position.y) {
+		addRotateBottomCursor();
+	}
+	else if ( lookAtThis.position.x < planeList[i].pic.position.x && lookAtThis.position.y < planeList[i].pic.position.y) {
+		addRotateLeftCursor();
+	}	
 }
 
 /***************************************************************************************************************/
@@ -1146,12 +1170,14 @@ function animate(t) {
 	/***************************************STATE ZERO**************************************/
 	/***************************************************************************************/
 	if (state == 0) {
-		//socket.emit( 'light movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
+		socket.emit( 'light movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
 
 		//Check to see if the camera has gone out of the boundary
 		checkCameraBoundary();
 
 		setProjection();
+
+		pickImage();
 
 		camera.position.x += camSpeedX;
 		camera.position.y += camSpeedY;
@@ -1257,6 +1283,8 @@ function animate(t) {
 		}
 		
 	}
+
+	stats.update();
 
 	window.requestAnimationFrame(animate, renderer.domElement);
 	render();

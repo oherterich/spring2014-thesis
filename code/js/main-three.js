@@ -15,6 +15,7 @@ var leftArrow = document.getElementById("left-arrow");
 var rightArrow = document.getElementById("right-arrow");
 var instruction = document.getElementsByClassName("instruction");
 instruction[0].style.opacity = 0.6;
+instruction[2].style.opacity = 0.6;
 
 var chime = new Audio('sound/chime.mp3');
 var ambient = new Audio('sound/ambient.mp3');
