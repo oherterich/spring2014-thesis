@@ -644,11 +644,6 @@ function manageSelectedPhotoClick(x, y) {
 		//Set selectedImage back to a non-number
 		//selectedImage = -1; 
 
-		//Remove textbox and clear out the notes HTML for next picture.
-		removeTextContainer();
-		clearNotes();
-		textbox.value = "";
-
 		//Set our boolean to its "front" state, because when we first click it always faces front.
 		bIsFront = true;
 
@@ -668,10 +663,6 @@ function manageSelectedPhotoClick(x, y) {
 			whichRotate = 0;
 
 			bIsFront = false;
-
-			addTextContainer();
-			addTextbox();
-			createNotes(photoLinks[selectedImage]['link']);
 		}
 
 		else {
@@ -681,12 +672,6 @@ function manageSelectedPhotoClick(x, y) {
 			whichRotate = 1;
 
 			bIsFront = true;
-
-			removeTextContainer();
-			clearNotes();
-			textbox.value = "";
-
-			removeInstruction(2);
 		}
 	}
 
@@ -700,10 +685,6 @@ function manageSelectedPhotoClick(x, y) {
 			whichRotate = 2;
 
 			bIsFront = false;
-
-			addTextContainer();
-			addTextbox();
-			createNotes(photoLinks[selectedImage]['link']);
 		}
 
 		else {
@@ -713,12 +694,6 @@ function manageSelectedPhotoClick(x, y) {
 			whichRotate = 3;
 
 			bIsFront = true;
-
-			removeTextContainer();
-			clearNotes();
-			textbox.value = "";
-
-			removeInstruction(2);
 		}
 	}
 }
@@ -843,7 +818,7 @@ function slideImages() {
 					var diff = new THREE.Vector3( lookAtThis.position.x - prevLookAtThis.x, lookAtThis.position.y - prevLookAtThis.y );
 					planeList[i].pic.position.x += diff.x;
 					planeList[i].pic.position.y += diff.y;
-					planeList[i].vel = diff.divide( new THREE.Vector3(3,3,3));
+					planeList[i].vel = diff.divide( new THREE.Vector3(4,4,4));
 				}
 				//If we're on one of the edges, rotate.
 				else if (dragState == 1) {
@@ -978,8 +953,6 @@ function tiltImage() {
 	else {
 		//Right side
 		if (mouse.x > w / 2 + imageSize / 2 && mouse.x < w / 2 + outerBoundary && !bTextboxActive) {
-			removeNotes();
-			hideTextbox();
 
 			if (planeList[selectedImage].pic.rotation.y < Math.PI + Math.PI / 12 && planeList[selectedImage].pic.rotation.y > 0) {
 				planeList[selectedImage].pic.rotation.y += 0.1;
@@ -1000,8 +973,6 @@ function tiltImage() {
 		}
 		//Left side
 		else if (mouse.x < w / 2 - imageSize / 2 && mouse.x > w / 2 - outerBoundary && !bTextboxActive) {
-			removeNotes();
-			hideTextbox();
 
 			if (planeList[selectedImage].pic.rotation.y > Math.PI - Math.PI / 12 && planeList[selectedImage].pic.rotation.y > 0) {
 				planeList[selectedImage].pic.rotation.y -= 0.1;
@@ -1055,8 +1026,6 @@ function tiltImage() {
 			}
 
 			addAutoCursor();
-			addNotes();
-			showTextbox();
 		}
 
 	}
