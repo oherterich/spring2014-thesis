@@ -478,6 +478,10 @@ container.addEventListener("mouseup", function (evt) {
 	bHUDDraggable = false;
 }, false);
 
+window.addEventListener("mouseup", function (evt) {
+	mouseDown = 0;
+});
+
 container.addEventListener('mousewheel', function (evt) {
 	if (state == 0) {
 		var zoom = map_range( evt.wheelDeltaY, -500, 500, -50, 50);
