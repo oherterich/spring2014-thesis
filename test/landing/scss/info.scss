@@ -1,0 +1,99 @@
+* { margin: 0; padding: 0 }
+
+body, html {
+	width: 100%;
+	font-family: Garamond, Baskerville, "Baskerville Old Face", "Hoefler Text", "Times New Roman", serif;
+
+	background: -webkit-linear-gradient(rgba(0,0,0,1.0),rgba(30,30,30,1.0)); /*Safari 5.1-6*/
+	background: -moz-linear-gradient(rgba(0,0,0,1.0),rgba(0,0,0,1.0)); /*Fx 3.6-15*/
+}
+
+nav {
+	width: 100%;
+	padding: 1.5% 0;
+	margin-bottom: 2%;
+
+
+	img {
+		width: 20%;
+		float: left;
+	}
+
+	ul {
+		width: 80%;
+		margin-left: 20%;
+
+		li {
+			display: inline-table;
+			text-align: left;
+			color: #fefefe;
+			padding: 1% 1.5%;
+		}
+	}
+
+	a:link, a:visited {
+		color: #fefefe;
+		text-decoration: none;
+		font-size: 0.9rem;
+		letter-spacing: 0.05rem;
+		opacity: 0.8;
+		transition: opacity 0.3s;
+		padding: 5% 8%;
+		-webkit-transform: translateZ(0);
+	}
+
+	a:hover {
+		opacity: 1.0;
+		transition: opacity 0.3s;
+		-webkit-transform: translateZ(0);
+	}
+}
+
+.active {
+	border-bottom: 1px solid #eee;
+}
+
+#content {
+	width: 80%;
+	margin-left: 20%;
+	color: #fefefe;
+
+	article {
+		padding: 0% 25% 5% 0%;
+	}
+
+	.title {
+		font-weight: normal;
+		font-size: 1.6rem;
+		margin-bottom: 0.5%;
+	}
+
+	.date {
+		font-weight: normal;
+		font-size: 0.9rem;
+		font-style: italic;
+		color: #aaa;
+		padding-bottom: 1%;
+		border-bottom: 1px solid #444;
+	}
+
+	.text {
+		margin: 1.5% 0;
+	}
+
+	img {
+		width: 100%;
+	}
+
+	a:link, a:visited {
+		color: #aaa;
+		text-decoration: none;
+		transition: color 0.3s, background 0.3s;
+	}
+
+	a:hover {
+		color: #000;
+		background: #fefefe;
+		transition: color 0.3s, background 0.3s;
+	}
+}

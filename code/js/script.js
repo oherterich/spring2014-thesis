@@ -22,6 +22,12 @@ var outerBoundary = (imageSize*3) / 4;
 var horizBoundary = 1920;
 var vertBoundary = 1200;
 
+//Vectors for the minimum and maximum edges of the world. Used for clamping light and camera.
+var boundaryMinVec = new THREE.Vector3( -1920, -1200, 0 );
+var boundaryMaxVec = new THREE.Vector3( 1920, 1200, 0 );
+var camMinVec = new THREE.Vector3( -1920 + w/2, -1200 + h/2, 1200);
+var camMaxVec = new THREE.Vector3( 1920 - w/2, 1200 - h/2, 12500);
+
 //Variable that controls the small rectangle in the HUD;
 var HUD = document.getElementById("HUD");
 var lightHUDSize = 45.0; //the size of the HUD_light.png file (px)
@@ -55,11 +61,14 @@ var bFadeLight = false;
 var bRotatePic = false;
 var rotateSpeed = 0.3;
 var whichRotate = -1;
-var damping = new THREE.Vector3( 0.85, 0.85, 0.85);
+var damping = new THREE.Vector3( 0.55, 0.55, 0.55);
 var maxSpeed = new THREE.Vector3(10.0, 10.0, 0);
 
 //Keep track of if we're dragging or rotation or not doing anything. -1 is nothing, 0 is drag, 1 is rotate
 var dragState = -1;
+
+//Keep track of our scrolling/zooming.
+var bIsScrolling = false;
 
 //Booleans to allow us to drag around our HUD
 var bHUDActive = false;
@@ -394,6 +403,7 @@ function changeTexture() {
 /***************************************************************************************************************/
 
 document.body.addEventListener('mousemove', function (evt) {
+
 	evt.preventDefault();
 
 	moveInfo.x = evt.clientX;
@@ -483,6 +493,8 @@ window.addEventListener("mouseup", function (evt) {
 });
 
 container.addEventListener('mousewheel', function (evt) {
+	bIsScrolling = true;
+
 	if (state == 0) {
 		var zoom = map_range( evt.wheelDeltaY, -500, 500, -50, 50);
 		camera.position.z += zoom;
@@ -490,7 +502,6 @@ container.addEventListener('mousewheel', function (evt) {
 
 		if (instruction[2].style.opacity > 0.0) {
 			instruction[2].style.opacity -= 0.03;
-			console.log(instruction[2].style.opacity);
 			if (instruction[2].style.opacity <= 0.01){
 				instruction[2].style.opacity = 0;
 				removeInstruction(2);
@@ -498,6 +509,8 @@ container.addEventListener('mousewheel', function (evt) {
 		}
 
 	}
+
+	console.log( lookAtThis.position.x + " | " + lookAtThis.position.y + " | " + lookAtThis.position.z );
 });
 
 window.addEventListener( 'resize', onWindowResize, false );
@@ -619,7 +632,58 @@ function checkPicClick( id ) {
 
 function manageSelectedPhotoClick(x, y) {
 
-	if (x < w/2 - outerBoundary || x > w/2 + outerBoundary || y < h/2 - imageSize/2 || y > h/2 + imageSize/2) {
+	//Turn image on right
+	if (x > w / 2 + imageSize / 3 && x < w / 2 + outerBoundary) {
+		turnPaper.play();
+
+		if (bIsFront) {
+			//rotateImage(1);
+
+			bRotatePic = true;
+			whichRotate = 0;
+
+			bIsFront = false;
+		}
+
+		else {
+			//rotateImage(0);
+
+			bRotatePic = true;
+			whichRotate = 1;
+
+			bIsFront = true;
+		}
+
+		return;
+	}
+
+	//Turn image on left
+	else if (x < w / 2 - imageSize / 3 && x > w / 2 - outerBoundary) {
+		turnPaper.play();
+
+		if (bIsFront) {
+			//rotateImage(1);
+
+			bRotatePic = true;
+			whichRotate = 2;
+
+			bIsFront = false;
+		}
+
+		else {
+			//rotateImage(0);
+
+			bRotatePic = true;
+			whichRotate = 3;
+
+			bIsFront = true;
+		}
+
+		return;
+	}
+
+	//Put image down.
+	else {
 		state = 0;
 
 		dropPaper.play();
@@ -656,50 +720,6 @@ function manageSelectedPhotoClick(x, y) {
 			bFirstTimeScrollInstruction = false;
 		}
 	}
-
-	if (x > w / 2 + imageSize / 3 && x < w / 2 + outerBoundary) {
-		turnPaper.play();
-
-		if (bIsFront) {
-			//rotateImage(1);
-
-			bRotatePic = true;
-			whichRotate = 0;
-
-			bIsFront = false;
-		}
-
-		else {
-			//rotateImage(0);
-
-			bRotatePic = true;
-			whichRotate = 1;
-
-			bIsFront = true;
-		}
-	}
-
-	if (x < w / 2 - imageSize / 3 && x > w / 2 - outerBoundary) {
-		turnPaper.play();
-
-		if (bIsFront) {
-			//rotateImage(1);
-
-			bRotatePic = true;
-			whichRotate = 2;
-
-			bIsFront = false;
-		}
-
-		else {
-			//rotateImage(0);
-
-			bRotatePic = true;
-			whichRotate = 3;
-
-			bIsFront = true;
-		}
-	}
 }
 
 //This function lets us move around the scene when we hover on the edges of the screen.
@@ -721,36 +741,6 @@ function moveCamera(x, y) {
 		camSpeedY = map_range(disY, h * boundaryPct, h/2, 0, -panMaxSpeed);
 	}
 }
-
-function checkCameraBoundary() {
-	if (camera.position.x > horizBoundary - w / 2) {
-		camSpeedX = 0;
-		camera.position.x = horizBoundary - w / 2;
-	}
-
-	if (camera.position.x < -horizBoundary + w / 2) {
-		camSpeedX = 0;
-		camera.position.x = -horizBoundary + w / 2;
-	}
-	
-	if (camera.position.y > vertBoundary - h / 2) {
-		camSpeedY = 0;
-		camera.position.y = vertBoundary - h / 2;
-	}
-
-	if (camera.position.y < -vertBoundary + h / 2) {
-		camSpeedY = 0;
-		camera.position.y = -vertBoundary + h / 2;
-	}
-
-	if (camera.position.z < 1200) {
-		camera.position.z = 1200;
-	}
-	if (camera.position.z > 2500) {
-		camera.position.z = 2500;
-	}
-}
-
 
 function setProjection() {
 	//For some reason, the following code accurately sets the position of the mouse in 3D space.
@@ -820,9 +810,11 @@ function slideImages() {
 					addTranslateCursor();
 
 					var diff = new THREE.Vector3( lookAtThis.position.x - prevLookAtThis.x, lookAtThis.position.y - prevLookAtThis.y );
+					
 					planeList[i].pic.position.x += diff.x;
 					planeList[i].pic.position.y += diff.y;
 					planeList[i].vel = diff.divide( new THREE.Vector3(4,4,4));
+					planeList[i].vel.clamp( new THREE.Vector3(-10.0, -10.0, -10.0), new THREE.Vector3(10.0, 10.0, 10.0) );
 				}
 				//If we're on one of the edges, rotate.
 				else if (dragState == 1) {
@@ -1145,11 +1137,13 @@ function animate(t) {
 	if (state == 0) {
 		socket.emit( 'light movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
 
-		//Check to see if the camera has gone out of the boundary
-		checkCameraBoundary();
+		//Make sure the camera has not gone out of the boundary
+		camera.position.clamp( camMinVec, camMaxVec );
 
-		setProjection();
-
+		//Only update the light position vector if we aren't scrolling. Fixes flickering.
+		if (!bIsScrolling) setProjection();
+		bIsScrolling = false;
+		
 		pickImage();
 
 		camera.position.x += camSpeedX;
@@ -1220,6 +1214,7 @@ function animate(t) {
 		lookAtThis.position.y = directionVector.y;
 		lookAtThis.position.z = directionVector.z;
 
+		lookAtThis.position.clamp( boundaryMinVec, boundaryMaxVec );
 	}
 
 	/***************************************************************************************/
