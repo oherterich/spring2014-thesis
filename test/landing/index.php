@@ -12,9 +12,9 @@
 		<nav>
 			<ul>
 				<li><a href="./news/">News</a></li>
-				<li><a href="#">About</a></li>
-				<li><a href="#">Manifesto</a></li>
-				<li><a href="#">Methodology</a></li>
+				<li><a href="./about/">About</a></li>
+				<li><a href="./manifesto/">Manifesto</a></li>
+				<li><a href="./methodology/">Methodology</a></li>
 			</ul>
 		</nav>
 	</section>

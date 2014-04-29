@@ -312,7 +312,7 @@ for (var i = 0; i < photoLinks.length; i++) {
 	var z = photoLinks[i]['posZ'] * 1;
 	var rot = photoLinks[i]['rot'] * 1;
 
-	var planeGeo = new THREE.PlaneGeometry(imageSize, imageSize, 10, 10);
+	var planeGeo = new THREE.PlaneGeometry(imageSize, imageSize, 1, 1);
 
 	if ( i < 39 ) {
 		var texture = THREE.ImageUtils.loadTexture("default_img/" + photoLinks[i]['link'] + ".jpg");

@@ -60,24 +60,54 @@ spotLight2.castShadow = true;
 spotLight2.shadowCameraVisible = true;
 //scene.add(spotLight2);
 
-for (var i = 0; i < 5; i++) {
-	for (var j = 0; j < 5; j++) {
+for (var i = 0; i < 25; i++) {
 
-		var c = new THREE.Color( 0xFFFFFF );
-		c.setRGB( Math.random(), Math.random(), Math.random() );
-		var material = new THREE.MeshLambertMaterial({ color: c, side:THREE.DoubleSide });
+		var materials = [];
+
+		var rand = Math.floor(Math.random()*4);
+		var img = THREE.ImageUtils.loadTexture('img/' + rand + '.jpg');
+		var photo = new THREE.MeshLambertMaterial({ map: img });
+
+		var texture = THREE.ImageUtils.loadTexture('img/grunge.jpg');
+		var grunge = new THREE.MeshLambertMaterial({ map: texture, blending: THREE["MultiplyBlending"], blendDst: photo });
+
 		var geometry = new THREE.PlaneGeometry(10, 10, 1, 10);
-		var mesh = new THREE.Mesh(geometry, material);
+		// var mesh = new THREE.Mesh(geometry, material);
 
-		mesh.position.set(Math.random() * 40 - 20, Math.random() * 40 - 20, Math.random() * 30);
-		mesh.rotation.z = Math.random() * Math.PI * 2;
+		// mesh.position.set(Math.random() * 40 - 20, Math.random() * 40 - 20, Math.random() * 30);
+		// mesh.rotation.z = Math.random() * Math.PI * 2;
 
-		mesh.castShadow = true;
-		mesh.receiveShadow = true;
+		// mesh.castShadow = true;
+		// mesh.receiveShadow = true;
 
-		scene.add(mesh);
-	}
+		// scene.add(mesh);
+
+		// materials.push(photo);
+		// materials.push(grunge);
+
+	 // 	group1 = THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+	 // 	group1.position.set(Math.random() * 40 - 20, Math.random() * 40 - 20, Math.random() * 30);
+		// group1.rotation.z = Math.random() * Math.PI * 2;
+	 // 	scene.add(group1);
 }
+
+window.onload = function() {
+	var material = new THREE.ShaderMaterial({
+        uniforms: {
+            texture_grass: { type: "t", value: 0, texture: THREE.ImageUtils.loadTexture('1.jpg') },
+            texture_rock: { type: "t", value: 1, texture: THREE.ImageUtils.loadTexture('grunge.jpg') },
+        },
+        vertexShader: document.getElementById( 'groundVertexShader' ).textContent,
+        fragmentShader: document.getElementById( 'groundFragmentShader' ).textContent
+    });
+
+	var geometry = new THREE.PlaneGeometry(20, 20);
+
+	var ground = new THREE.Mesh( geometry, material );
+	scene.add(ground);
+}
+
+
 
 
 
