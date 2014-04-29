@@ -17,19 +17,6 @@ console.log("access token: " + hash);
 /**************DETECT CLICK****************/
 /******************************************/
 
-var beginButton = document.querySelector("#begin-link");
-var login = document.querySelector("#login-hidden");
-
-beginButton.addEventListener('click', function(evt) {
-	login.id = "login-visible";
-});
-
-var exitButton = document.querySelector("#exit-button");
-
-exitButton.addEventListener('click', function(evt) {
-	login.id = "login-hidden";
-})
-
 var loading = document.querySelector(".loading-hidden");
 console.log(loading);
 
