@@ -12,11 +12,17 @@ var instruction = document.getElementsByClassName("instruction");
 instruction[0].style.opacity = 0.6;
 instruction[2].style.opacity = 0.6;
 
+var numUsers = document.getElementById('num-users');
+var userConnect = document.getElementById('user-connect');
+var userDisconnect = document.getElementById('user-disconnect');
+
 var chime = new Audio('sound/chime.mp3');
 var ambient = new Audio('sound/ambient.mp3');
 var turnPaper = new Audio('sound/turnpaper.mp3');
 var dropPaper = new Audio('sound/droppaper.mp3');
 var pickPaper = new Audio('sound/pickpaper.mp3');
+var enter = new Audio('sound/enter.mp3');
+var exit = new Audio('sound/exit.mp3');
 
 ambient.loop = true;
 ambient.play();
@@ -185,6 +191,21 @@ function rotateRightNotes() {
 
 function clearNotes() {
     notes.innerHTML = "";
+}
+
+function removeUserConnectDisconnect() {
+    if (userConnect.style.opacity > 0.0) {
+        userConnect.style.opacity -= 0.01;
+        if (userConnect.style.opacity <= 0.01){
+            userConnect.style.opacity = 0;
+        }
+    }
+    if (userDisconnect.style.opacity > 0.0) {
+        userDisconnect.style.opacity -= 0.01;
+        if (userDisconnect.style.opacity <= 0.01){
+            userDisconnect.style.opacity = 0;
+        }
+    }
 }
 
 userPosition.addEventListener('mouseover', function(evt) {

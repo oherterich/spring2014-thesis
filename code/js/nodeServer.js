@@ -24,29 +24,7 @@ io.sockets.on( 'connection', function( client ) {
 		joinRoom( client );
 	});
 
-	
-
-	// client.emit('init', { userid: client.id, users: clients.length});
-
-	// for (var i = 0; i < clients.length; i++) {
-	// 	client.emit( 'init user', { userid: clients[i].id } );
-	// }
-
-	// clients.push(client);
-
-	// client.broadcast.emit( 'entrance', { message: "A new user has joined!", userid: client.id });
-
-	// client.on('disconnect', function( data ) {
-	// 	for (var i = 0; i < clients.length; i++) {
-	// 		if ( client.id === clients[i].id ) {
-	// 			clients.splice(i, 1);
-	// 		}
-	// 	}
-	// 	client.broadcast.emit( 'user disconnect', { message: "A user has disconnected", userid: client.id } );
-	// });
-
 	client.on('light movement', function( data ) {
-		//console.log( client.id + " - ( " + data.posX + ", " + data.posY + " )");
 		client.broadcast.to( client.room ).emit( 'light movement', { userid: client.id, lookX: data.lookX, lookY: data.lookY, camX: data.camX, camY: data.camY });
 	});
 
@@ -56,7 +34,12 @@ io.sockets.on( 'connection', function( client ) {
 
 	client.on('selected photo', function( data ) {
 		client.broadcast.to( client.room ).emit( 'ping', { posX: data.posX, posY: data.posY });
-	})
+	});
+
+	client.on('disconnect', function() {
+		console.log( 'user ' + client.id + ' has disconnected');
+		client.broadcast.to( client.room ).emit( 'disconnect', { userid: client.id } ); 
+	});
 
 });
 
@@ -84,7 +67,7 @@ function joinRoom( client ) {
 				//Tell our newly joined player who is in the room.
 				//We do this before joining the room so that we don't send a message about ourselves.
 				for (var j = 0; j < io.sockets.clients( rooms[i] ).length; j++) {
-					client.emit( 'init user', { userid: io.sockets.clients( rooms[i] )[j].id, inst: io.sockets.clients( rooms[i] )[j].inst  } );
+					client.emit( 'init user', { userid: io.sockets.clients( rooms[i] )[j].id, inst: io.sockets.clients( rooms[i] )[j].inst, initial: true  } );
 				}
 
 				//Join the room
@@ -93,7 +76,7 @@ function joinRoom( client ) {
 				console.log( rooms[i] + " now has " + io.sockets.clients( rooms[i] ).length + " players!" );
 
 				//Tell everyone else that someone has joined.
-				client.broadcast.to( rooms[i] ).emit( 'init user', { userid: client.id, inst: client.inst } );
+				client.broadcast.to( rooms[i] ).emit( 'init user', { userid: client.id, inst: client.inst, initial: false } );
 			}
 		}
 	}

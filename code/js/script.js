@@ -88,7 +88,7 @@ var directionVector = new THREE.Vector3();
 var SCREEN_HEIGHT = window.innerHeight;
 var SCREEN_WIDTH = window.innerWidth;
 
-var moveInfo = {
+var moveInfo = {       
   x: 0,
   y: 0,
 };
@@ -110,10 +110,10 @@ var container = document.getElementById("container");
 container.appendChild(renderer.domElement);
 
 //For stats/frame rate
-var stats = new Stats();
-	stats.domElement.style.position = 'absolute';
-	stats.domElement.style.top = '0px';
-	container.appendChild( stats.domElement );
+// var stats = new Stats();
+// 	stats.domElement.style.position = 'absolute';
+// 	stats.domElement.style.top = '0px';
+// 	container.appendChild( stats.domElement );
 
 //Variables for camera
 var  FOV = 45,
@@ -302,10 +302,6 @@ function Plane( pic, vel, acc, id ) {
 
 // INITIALIZE GROUND PLANES
 for (var i = 0; i < photoLinks.length; i++) {
-	// var x = Math.random() * (horizBoundary*2) - horizBoundary;
-	// var y = Math.random() * (vertBoundary*2) - vertBoundary;
-	// var z = Math.random() * maxZDepth;
-	//var rot = Math.random() * (Math.PI / 2) - (Math.PI/4);
 	
 	var x = photoLinks[i]['posX'] * 1;
 	var y = photoLinks[i]['posY'] * 1;
@@ -314,22 +310,15 @@ for (var i = 0; i < photoLinks.length; i++) {
 
 	var planeGeo = new THREE.PlaneGeometry(imageSize, imageSize, 1, 1);
 
-	if ( i < 39 ) {
-		var texture = THREE.ImageUtils.loadTexture("default_img/" + photoLinks[i]['link'] + ".jpg");
+	if ( i < 40 ) {
+		var photourl = "default_img/" + photoLinks[i]['link'] + ".jpg";
 	}
 	else {
-		var texture = THREE.ImageUtils.loadTexture("instagram_img/" + photoLinks[i]['link'] + ".jpg");
+		var photourl = "instagram_img/" + photoLinks[i]['link'] + ".jpg";
 	}
 
-	// var c = new THREE.Color( 0xFFFFFF );
-	// c.setRGB( Math.random(), Math.random(), Math.random() );
-	// var material = new THREE.MeshLambertMaterial({ color: c });
-
-	//var rand2 = Math.floor(Math.random() * 5);
-	//var rough = THREE.ImageUtils.loadTexture("img/texture_" + rand2 + ".jpg");
-	//var material = new THREE.MeshPhongMaterial({ map: texture, bumpMap: rough, bumpScale: 5 });
+    var texture = THREE.ImageUtils.loadTexture(photourl);
 	var material = new THREE.MeshPhongMaterial({ map: texture });
-
 	var plane = new THREE.Mesh(planeGeo, material);
 
 	plane.position.x = x;
@@ -337,9 +326,6 @@ for (var i = 0; i < photoLinks.length; i++) {
 	plane.position.z = z;
 
 	plane.rotation.z = rot;
-
-	// plane.castShadow = true;
-	// plane.receiveShadow = true;
 
 	var vel = new THREE.Vector3( 0, 0, 0 );
 	var acc = new THREE.Vector3( 0, 0, 0 );
@@ -1137,6 +1123,8 @@ function animate(t) {
 	if (state == 0) {
 		socket.emit( 'light movement', { lookX: lookAtThis.position.x, lookY: lookAtThis.position.y, camX: camera.position.x, camY: camera.position.y } );
 
+		removeUserConnectDisconnect();
+
 		//Make sure the camera has not gone out of the boundary
 		camera.position.clamp( camMinVec, camMaxVec );
 
@@ -1252,7 +1240,7 @@ function animate(t) {
 		
 	}
 
-	stats.update();
+	//stats.update();
 
 	window.requestAnimationFrame(animate, renderer.domElement);
 	render();

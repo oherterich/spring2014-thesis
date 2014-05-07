@@ -38,28 +38,32 @@ socket.on("entrance", function (data) {
 	console.log( data.message );
 });
 
-socket.on('init', function (data) {
-	//newUser( data.userid );
-	console.log(data.userid);
-	console.log(data.users);
-});
-
 socket.on('init user', function (data) {
-	newUser( data.userid, data.inst );
-	//console.log("new user " + data.userid);
+	newUser( data.userid, data.inst, data.initial );
 	console.log("new user " + data.inst);
-	//console.log(userList.length);
 });
 
-socket.on('user disconnect', function (data) {
+socket.on('disconnect', function (data) {
 	for (var i = 0; i < userList.length; i++) {
 		if ( userList[i].userid == data.userid ) {
-			var element = document.getElementById("test").childNodes[i];
-			element.parentNode.removeChild(element);
 			userList.splice(i, 1);
 			console.log("The user " + data.userid + " has disconnected.");
 		}
 	}
+
+
+	if ( userList.length == 0 ) {
+    	numUsers.innerHTML = ''; 
+	}
+	else if ( userList.length == 1 ) {
+    	numUsers.innerHTML = userList.length + ' fellow explorer.' 
+	}
+	else {
+		numUsers.innerHTML = userList.length + ' fellow explorers.' 
+	}
+
+	userDisconnect.style.opacity = 0.7;
+	exit.play();
 });
 
 socket.on('light movement', function (data) {
@@ -67,7 +71,6 @@ socket.on('light movement', function (data) {
 });
 
 socket.on('pic movement', function (data) {
-	//console.log( data.id + ": " + data.posX + " | " + data.posY);
 	for( var i = 0; i < planeList.length; i++ ) {
 		if ( planeList[i].id == data.id ) {
 			planeList[i].pic.position.x = data.posX;
@@ -91,7 +94,7 @@ socket.on('ping', function (data) {
 	chime.play();
 });
 
-var newUser = function( userid, inst ) {
+var newUser = function( userid, inst, initial ) {
 	var user = new User( 0, 0, userid );
 	console.log(user);
 	userList.push( user );
@@ -109,6 +112,19 @@ var newUser = function( userid, inst ) {
             newPhotos( newPhotoLinks );
          }
     });
+
+    userConnect.style.opacity = 0.7;
+
+    if ( userList.length == 1 ) {
+    	numUsers.innerHTML = userList.length + " fellow explorer." 
+	}
+	else {
+		numUsers.innerHTML = userList.length + " fellow explorers." 
+	}
+
+    if (!initial) {
+    	enter.play();
+	}
 }
 
 var updateLights = function( userid, lookX, lookY, camX, camY ) {
