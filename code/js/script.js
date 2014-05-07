@@ -564,7 +564,8 @@ function checkPicClick( id ) {
 			metaContext_name.setTransform(1,0,0,1,0,0); //Reset the transformation matrix
 			metaContext_name.clearRect(0, 0, metaCanvas_name.width, metaCanvas_name.height); //Clear it!!!!!!
 			metaContext_name.restore(); //Let's get it back
-			metaContext_name.fillText(metaDataText_name, getRandomInt(20,30), getRandomInt(145, 155)); //Change the fill text to our new text
+			metaContext_name.font = Math.floor(Math.random()*4) + 24 + "px Font";
+			metaContext_name.fillText(metaDataText_name, 30, 80); //Change the fill text to our new text
 			metaDataTexture_name.needsUpdate = true; //Update dat texture
 
 			metaDataText_date = photoLinks[selectedImage]['time']; //Set the text to the selected name
@@ -572,12 +573,13 @@ function checkPicClick( id ) {
 			metaContext_date.setTransform(1,0,0,1,0,0); //Reset the transformation matrix
 			metaContext_date.clearRect(0, 0, metaCanvas_date.width, metaCanvas_date.height); //Clear it!!!!!!
 			metaContext_date.restore(); //Let's get it back
-			metaContext_date.fillText(metaDataText_date, getRandomInt(20,30), getRandomInt(110,120)); //Change the fill text to our new text
+			metaContext_name.font = Math.floor(Math.random()*2) + 16 + "px Font";
+			metaContext_date.fillText(metaDataText_date, 30, 50); //Change the fill text to our new text
 			metaDataTexture_date.needsUpdate = true; //Update dat texture
 
 			metaDataText_caption = photoLinks[selectedImage]['caption']; //Set the text to the selected name
-			if (metaDataText_caption == "n") { //We need this because blank captions are set to say "n" by default
-				metaDataText_caption = "";
+			if (metaDataText_caption == "n" || metaDataText_caption == "" || metaDataText_caption == " ") { //We need this because blank captions are set to say "n" by default
+				metaDataText_caption = ". . .";
 			}
 
 			//We want to take out the hashtags in our captions because they are obnoxious and jarring.
@@ -600,7 +602,9 @@ function checkPicClick( id ) {
 			metaContext_caption.setTransform(1,0,0,1,0,0); //Reset the transformation matrix
 			metaContext_caption.clearRect(0, 0, metaCanvas_caption.width, metaCanvas_caption.height); //Clear it!!!!!!
 			metaContext_caption.restore(); //Let's get it back
-			wrapText(metaContext_caption, metaDataText_caption, getRandomInt(20,30), getRandomInt(200,220), 400, 32 );
+			metaContext_caption.font = Math.floor(Math.random()*4) + 22 + "px Font";
+			metaContext_caption.textAlign = 'center';
+			wrapText(metaContext_caption, metaDataText_caption, imageSize/2, imageSize/2, 400, 32 );
 			metaDataTexture_caption.needsUpdate = true; //Update dat texture
 
 
