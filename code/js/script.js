@@ -1,4 +1,4 @@
-
+	
 //*********************************************************************
 var planeList = []; //main array that holds all of our pictures/planes
 
@@ -137,23 +137,6 @@ var prevCamZ = camera.position.z;
 var camSpeedX = 0.0;
 var camSpeedY = 0.0;
 
-//  var controls = new THREE.TrackballControls( camera, renderer.domElement );
-
-// controls.rotateSpeed = 1.0;
-// controls.zoomSpeed = 1.2;
-// controls.panSpeed = 0.8;
-
-// controls.noZoom = true;
-// controls.noPan = true;
-// controls.noRotate = true;
-
-// controls.staticMoving = true;
-// controls.dynamicDampingFactor = 0.3;
-
-// controls.keys = [ 65, 83, 68 ];
-
-// controls.addEventListener( 'change', render );
-
 //Create a scene
 var scene = new THREE.Scene();
 
@@ -177,24 +160,6 @@ var lookAtThis = new THREE.Mesh(lookAtThisGeom, lookAtThisText);
 scene.add(lookAtThis);
 
 var prevLookAtThis = new THREE.Vector3();
-
-//enable shadows on the renderer
-//renderer.shadowMapEnabled = true;
-//renderer.shadowMapCullFace = THREE.CullFaceBack; //not sure why this is here, but it helps.
-
-//enable shadows for a light
-// light.castShadow = true;
-// light.shadowMapWidth = 512;
-// light.shadowMapHeight = 512;
-// light.shadowCameraNear = 10;
-// light.shadowCameraFar = 2000;
-// light.shadowCameraFov = 60;
-// light.shadowBias = -0.001;
-// light.shadowCameraNear = 0;
-// light.shadowCameraFar = 1600;
-// light.shadowCameraFov = 45;
-//light.shadowCameraNear = 0.01;
-
 
 /***************************************************************************************/
 /********************************META DATA + PLANE STUFF********************************/
@@ -317,22 +282,49 @@ for (var i = 0; i < photoLinks.length; i++) {
 		var photourl = "instagram_img/" + photoLinks[i]['link'] + ".jpg";
 	}
 
-    var texture = THREE.ImageUtils.loadTexture(photourl);
-	var material = new THREE.MeshPhongMaterial({ map: texture });
-	var plane = new THREE.Mesh(planeGeo, material);
+	var request;
+	if(window.XMLHttpRequest)
+		request = new XMLHttpRequest();
+	else
+		request = new ActiveXObject("Microsoft.XMLHTTP");
+		request.open('GET', photourl, false);
+		request.send(); // there will be a 'pause' here until the response to come.
+		// the object request will be actually modified
+	if (request.status != 404) {
+		var texture = THREE.ImageUtils.loadTexture(photourl);
+		var material = new THREE.MeshPhongMaterial({ map: texture });
+		var plane = new THREE.Mesh(planeGeo, material);
 
-	plane.position.x = x;
-	plane.position.y = y;
-	plane.position.z = z;
+		plane.position.x = x;
+		plane.position.y = y;
+		plane.position.z = z;
 
-	plane.rotation.z = rot;
+		plane.rotation.z = rot;
 
-	var vel = new THREE.Vector3( 0, 0, 0 );
-	var acc = new THREE.Vector3( 0, 0, 0 );
-	var id = photoLinks[i]['link'];
+		var vel = new THREE.Vector3( 0, 0, 0 );
+		var acc = new THREE.Vector3( 0, 0, 0 );
+		var id = photoLinks[i]['link'];
 
-	planeList.push( new Plane( plane, vel, acc, id ) );
-	scene.add(plane);
+		planeList.push( new Plane( plane, vel, acc, id ) );
+		scene.add(plane);
+	}
+
+ //    var texture = THREE.ImageUtils.loadTexture(photourl);
+	// var material = new THREE.MeshPhongMaterial({ map: texture });
+	// var plane = new THREE.Mesh(planeGeo, material);
+
+	// plane.position.x = x;
+	// plane.position.y = y;
+	// plane.position.z = z;
+
+	// plane.rotation.z = rot;
+
+	// var vel = new THREE.Vector3( 0, 0, 0 );
+	// var acc = new THREE.Vector3( 0, 0, 0 );
+	// var id = photoLinks[i]['link'];
+
+	// planeList.push( new Plane( plane, vel, acc, id ) );
+	// scene.add(plane);
 
 }
 
@@ -855,18 +847,6 @@ function setHUD() {
  	}
 }
 
-function dragHUD() {
-	var horiz = map_range(mouse.x, w-256-lightHUDSize/2, w-256-lightHUDSize/2, 0, 256) - lightHUDSize/2;
-	var vert = map_range(mouse.y, h-160-lightHUDSize/2, h, 0, 160) - lightHUDSize/2;
-
-	userPosition.style.left = horiz + "px";
-	userPosition.style.top = vert + "px";
-
-	camera.position.x = map_range(horiz, 0, 256, -horizBoundary, horizBoundary);
-	camera.position.y = map_range(vert, 0, 160, vertBoundary, -vertBoundary);
-
-}
-
 function checkTextbox() {
 	if (document.activeElement.nodeName == "TEXTAREA" || document.activeElement.nodeName == "INPUT") {
 		bTextboxActive = true;
@@ -1142,13 +1122,7 @@ function animate(t) {
 		camera.position.x += camSpeedX;
 		camera.position.y += camSpeedY;
 
-		if (bHUDDraggable && bHUDActive) {
-			dragHUD();
-		}
-		else {
-			setHUD();
-		}
-
+		setHUD();
 
 		if (bHUDActive) {
 			camSpeedX = 0;
@@ -1160,13 +1134,8 @@ function animate(t) {
 		light.angle = angle;
 		light.exponent = exponent;
 
-		//backgroundTexture.position.x = camera.position.x;
-		//backgroundTexture.position.y = camera.position.y;
-
 		light.position.set( camera.position.x, camera.position.y, camera.position.z );
 		light.target = lookAtThis;
-
-		//controls.update();
 
 		if (selectedImage != -1) {
 			animateToFront(selectedImagePos.x, selectedImagePos.y, maxZDepth, putBackRotation);

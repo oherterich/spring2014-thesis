@@ -1,4 +1,4 @@
-<!doctype HTML>
+<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8"/>
@@ -7,6 +7,7 @@
 	<link rel="icon" type="image/png" href="img/icon.png">
 
     <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" type="image/png" href="img/favicon.png"/>
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>	
 </head>
@@ -15,7 +16,7 @@
 	<section id="content">
 		<div id="login">
 			<a id="connect-link" href="#"><img src="img/connect_large.png" alt="Connect to Instagram"></a>
-			<a id="no-instagram" href="./three.html">No Instagram account?</a>
+			<a id="no-instagram" href="./pastpresent.html">No Instagram account?</a>
 			<div id="mobile">
 				<h2>Oh no!</h2>
 				<p>Looks like you're visiting on a phone or tablet.

@@ -1,12 +1,12 @@
+//Variables for connecting with Instagram
 var clientid = "3a4831a9152845bcb5caa94f713a8d00";
 var redirectURL = "http://macaroni.local/GradSchool/ThesisSpring/spring2014-thesis/code/";
 var authURL = "https://api.instagram.com/oauth/authorize/?client_id=" + clientid + "&redirect_uri=" + redirectURL + "&response_type=token";
 
-if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
-
 var instagramLogin = document.querySelector('#connect-link');
 instagramLogin.href = authURL;
 
+//Used to get the Auth Token from the URL
 function getHashValue(key) {
   return location.hash.split('=')[1];
 }
@@ -42,6 +42,8 @@ function showUserDeny() {
 /*************CHECK FOR ERROR**************/
 /******************************************/
 
+//parses url and gets query
+// from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 var urlParams;
 (window.onpopstate = function () {
     var match,
@@ -105,7 +107,7 @@ $(document).ready(function(){
 					}
 				})
 				.always(function (data) {
-					window.location="three.html?" + parsed_json['data'][0]['user']['id'];
+					window.location="pastpresent.html?" + parsed_json['data'][0]['user']['id'];
 				});
 			}
 		});

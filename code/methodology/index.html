@@ -7,13 +7,14 @@
 	<link href="../css/tablet.css" rel="stylesheet" type="text/css">
 	<link href="../css/mobile.css" rel="stylesheet" type="text/css">
 	<meta name="viewport" content="width=device-width">
+	<link rel="shortcut icon" type="image/png" href="../img/favicon.png"/>
 </head>
 <body>
 	<nav>
 		<a href="../"><img src="../img/logo.png" alt="Past and Present"></a>
 		<ul>
 			<li><a href="../">Home</a></li>
-			<li><a href="#">News</a></li>
+			<li><a href="../news/">News</a></li>
 			<li><a href="../about/">About</a></li>
 			<li><a href="../manifesto/">Manifesto</a></li>
 			<li class="active"><a href="../methodology">Methodology</a></li>
@@ -23,11 +24,16 @@
 		<article>
 		<h2 class="title">Methodology</h2>
 		<h3 class="subheading">Process</h3>
-		<p class="text">Every day, billions of bytes of content are created, curated, shared, and sent across the networks of the world. Much like ephemera in the real world, their importance is diminished over time on an ever-increasing scale. Soon, they are condemned to an eternal server-side purgatory, existing and available, but forgotten. This ephemeral nature of the Internet is exemplified by this relegation of vast amounts of human cognition and creation to a temporary existence. If we are resigned to acknowledge that life online is fleeting, how can we bring value to some of the data we share? One way to do so is to present such data in a way that allows us to slow down, interact, and consider each piece of content as something created by an individual. The creator of the content spent time to gather his thoughts or carefully compose her picture, but this deliberate creation is lost in the shuffle, one piece of a vast digital puzzle. How can we take this data and view it in a way that allows for more meaningful interaction?</p>
-		<p class="text">The notion of artificial ephemerality is an important part of my project. As soon as we create or encounter new content online, the previous data becomes rapidly irrelevant. It’s consumed and forgotten in an instant, its original fleeting purpose served. Unlike a physical note or picture, however, digital information is easily stored and preserved. It is likely that every post that you have made on a social network is still available for viewing, but why bother? Though these posts might have once held importance in your life, they are quickly replaced by what’s newer and more relevant. The content is always available, but its purpose has disappeared. It’s an artificially-imposed ephemerality, something that is a relatively new occurrence in human society.</p>
+		<p class="text">In this project, users are invited to login to the site with their Instagram account. After doing so, the system grabs their most recent photos and starts the application. The user's photos are shown, along with an additional random selection of curated photos from Instagram. While on the site, users can explore the photos by dragging them around, uncovering what's underneath, and selecting them to find more information. In addition, when multiple users are on the site they are connected via WebSockets. They can see each others' photos and collaboratively explore the space.</p>
 		<h3 class="subheading">Technology</h3>
-		<p class="text">In this project, I want to explore this notion of artificial ephemerality. To do so, I will create a web application that allows users to explore Instagram photos in a carefully designed interface and experience. Instead of the usual flow and grid-like presentation of images, my project will present the content as something that must be explored to be experienced. It is modeled after bins of old photos that you might find in a thrift shop or second-hand store. While digging through old photos, the value lies not in consuming the most amount of information possible, but in uncovering and discovering what might be next. So it is in my project; I want the users to spend time exploring the content of the site through a series on interesting interactions.</p>
-		<p class="text">This project is important because it provides a critical look and alternative experience to the standard way of consuming data online. Granted, it is not a project that will appeal to everyone; rather, those who have an interest in how technology is shaping us will be interested in experiencing such a project. By relating digital content to physical and tangible objects, however, I hope to attract a broader audience outside of the tech community. If I am successful in my technical pursuits and the specific invocation of mood and atmosphere, I hope to have people think twice about the alarming pace and nature of their digital lives.</p>
+		<p class="text">Past &amp; Present was created with a variety of different technologies. The experience was primarily coded in Javascript with the amazing <a href="http://threejs.org" target="_blank">Three.js</a> library. Most of the server-side code was written in PHP. MySQL databases were used to store information about the photos in the application. <a href="http://nodejs.org/" target="_blank">Node.js</a> and <a href="http://socket.io" target="_blank">Socket.io</a> were also used to handle the multi-user experience on the site.</p>
+		<h3 class="subheading">Privacy</h3>
+		<p class="text">Upon logging into the site through their Instagram, users' photos are stored on a database in order to link them into the Three.js application. These photos are not shared, distributed, or visible in any capacity (other than on the Past &amp; Present application experience).</p>
+		<h3 class="subheading">Source Code</h3>
+		<p class="text">All of the source code for this project is freely available on <a href="https://github.com/oherterich/spring2014-thesis" target="_blank">GitHub</a>.</p>
+		<h3 class="subheading">Acknowledgements</h3>
+		<p class="text">Thanks to <a href="https://twitter.com/jofsharp" target="_blank">John Sharp</a> for guidance throughout the thesis process, Barbara Morris and Ethan Silverman for advice on research and writing, and all of my amazing and talented friends from <a href="http://mfadt.parsons.edu/2014/" target="_blank">Parsons MFADT</a></p>
+		<p class="text">Have a question about the project? Feel free to <a href="mailto:oherterich@gmail.com">get in touch</a>.
 	</article>
 	</section>
 </body>

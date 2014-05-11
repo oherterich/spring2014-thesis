@@ -195,6 +195,7 @@ function clearNotes() {
     notes.innerHTML = "";
 }
 
+//Fades away our message for users connecting/disconneting
 function removeUserConnectDisconnect() {
     if (userConnect.style.opacity > 0.0) {
         userConnect.style.opacity -= 0.01;

@@ -33,11 +33,6 @@ var User = function( posX, posY, userid ) {
 
 socket.emit('inst_id', { inst: url.split('?')[1] });
 
-socket.on("entrance", function (data) {
-	newUser( data.userid );
-	console.log( data.message );
-});
-
 socket.on('init user', function (data) {
 	newUser( data.userid, data.inst, data.initial );
 	console.log("new user " + data.inst);
