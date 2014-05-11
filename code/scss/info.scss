@@ -8,7 +8,8 @@ body, html {
 	background: url("../img/info_background.jpg") no-repeat center center;
 	background-size: cover;
 
-	overflow: hidden;	
+	overflow-x: hidden;	
+	overflow-y: scroll;	
 }
 
 nav {
@@ -67,6 +68,7 @@ nav {
 	color: #fefefe;
 	height: 80%;
 	overflow: auto;
+	padding-bottom: 7%;
 
 	article {
 		padding: 0% 0% 5% 0%;
@@ -80,6 +82,16 @@ nav {
 		font-size: 1.6rem;
 		margin-bottom: 1%;
 		letter-spacing: 0.03rem;
+	}
+
+	.heading {
+		font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+		font-weight: normal;
+		font-style: italic;
+		font-size: 1.4rem;
+		margin-bottom: 1%;
+		letter-spacing: 0.03rem;
+		margin-bottom: 2%;
 	}
 
 	.subheading {
@@ -98,15 +110,18 @@ nav {
 		color: #898989;
 		padding-bottom: 1%;
 		border-bottom: 1px solid #aaa;
+		margin-bottom: 2%;
 	}
 
 	.text {
 		margin-bottom: 1.5%;
 		color: #ddd;
+		margin-bottom: 2%;
 	}
 
 	img {
 		width: 100%;
+		margin-bottom: 2%;
 	}
 
 	a:link, a:visited {
@@ -119,5 +134,11 @@ nav {
 		color: #000;
 		background: #fefefe;
 		transition: color 0.3s, background 0.3s;
+	}
+
+	#manifesto {
+		height: 1000px;
+		background: url('../img/manifesto.png') top center no-repeat;
+		background-size: contain;
 	}
 }

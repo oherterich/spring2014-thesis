@@ -1,10 +1,9 @@
 <!doctype HTML>
 <html>
 <head>
+	<meta charset="utf-8"/>
 	<title>Past &amp; Present</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
-	<link rel="stylesheet" type="text/css" href="css/tablet.css">
-	<link rel="stylesheet" type="text/css" href="css/mobile.css">
 	<link rel="icon" type="image/png" href="img/icon.png">
 
     <meta name="viewport" content="width=device-width">
@@ -15,7 +14,7 @@
 <body>
 	<section id="content">
 		<div id="login">
-			<a id="connect-link" href="#"><img src="img/connect_large.png"></a>
+			<a id="connect-link" href="#"><img src="img/connect_large.png" alt="Connect to Instagram"></a>
 			<a id="no-instagram" href="./three.html">No Instagram account?</a>
 			<div id="mobile">
 				<h2>Oh no!</h2>
@@ -36,7 +35,7 @@
 
 	<section id="handler" class="handler-hidden">
 		<div class="loading-hidden">
-			<img src="img/loader.gif">
+			<img src="img/loader.gif" alt="Loading">
 		</div>
 		<div id="user-deny" class="user-deny-hidden">
 			<h2>Oh no!</h2>

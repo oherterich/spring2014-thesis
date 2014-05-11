@@ -162,3 +162,95 @@ nav {
 
 .user-deny-hidden {
   display: none; }
+
+/***********************************************/
+/* iPads (portrait and landscape) ----------- */
+/**********************************************/
+@media screen and (max-width: 1024px) {
+  body, html {
+    background: url("../img/background_tablet.jpg") no-repeat top center;
+    background-size: cover; }
+
+  #login {
+    bottom: 0;
+    top: 30%;
+    width: 450px;
+    margin-left: -225px; }
+
+  #login img, #login #no-instagram {
+    display: none; }
+
+  #login #mobile {
+    display: block; }
+    #login #mobile h2 {
+      font-size: 1.7rem;
+      color: #fff;
+      font-weight: normal;
+      text-align: center; }
+    #login #mobile p {
+      font-size: 1.1rem;
+      color: #fff;
+      font-weight: normal;
+      text-align: left;
+      padding-top: 10px; }
+
+  nav {
+    width: 100%;
+    position: absolute;
+    bottom: 3%;
+    padding: 0;
+    background: none; }
+    nav ul li {
+      width: 100%;
+      color: #fefefe;
+      background: #111;
+      padding: 20px 0;
+      margin: 5px 0; }
+    nav a:link, nav a:visited {
+      font-size: 1.1rem; } }
+/****************************************************/
+/* Smartphones (portrait and landscape) ----------- */
+/****************************************************/
+@media screen and (min-width: 320px) and (max-width: 568px) {
+  body, html {
+    background: url("../img/background_mobile.jpg") no-repeat top center;
+    background-size: cover; }
+
+  #login {
+    bottom: 0;
+    top: 24%;
+    width: 250px;
+    left: 50%;
+    margin-left: -125px; }
+
+  #login img, #login #no-instagram {
+    display: none; }
+
+  #login #mobile {
+    display: block; }
+    #login #mobile h2 {
+      font-size: 1.6rem;
+      color: #fff;
+      font-weight: normal;
+      text-align: center; }
+    #login #mobile p {
+      font-size: 1.0rem;
+      color: #fff;
+      font-weight: normal;
+      text-align: left;
+      padding-top: 0px; }
+
+  nav {
+    width: 100%;
+    position: absolute;
+    bottom: 3%;
+    padding: 0;
+    background: none; }
+    nav ul li {
+      width: 100%;
+      color: #fefefe;
+      background: #111;
+      padding: 4% 0;
+      margin: 1% 0; }
+    nav a:link, nav a:visited {
+      font-size: 1.1rem; } }
