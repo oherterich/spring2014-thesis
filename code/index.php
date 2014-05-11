@@ -2,13 +2,27 @@
 <html>
 <head>
 	<title>Past &amp; Present</title>
-	<link href="css/style.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/tablet.css">
+	<link rel="stylesheet" type="text/css" href="css/mobile.css">
+	<link rel="icon" type="image/png" href="img/icon.png">
+
+    <meta name="viewport" content="width=device-width">
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>	
 </head>
 
 <body>
 	<section id="content">
 		<div id="login">
 			<a id="connect-link" href="#"><img src="img/connect_large.png"></a>
+			<a id="no-instagram" href="./three.html">No Instagram account?</a>
+			<div id="mobile">
+				<h2>Oh no!</h2>
+				<p>Looks like you're visiting on a phone or tablet.
+				To get the full experience, please use your computer.
+				You're still welcome to look around, though!</p>
+			</div>
 		</div>
 		<nav>
 			<ul>
@@ -20,10 +34,16 @@
 		</nav>
 	</section>
 
-	<section class="loading-hidden">
+	<section id="handler" class="handler-hidden">
+		<div class="loading-hidden">
 			<img src="img/loader.gif">
+		</div>
+		<div id="user-deny" class="user-deny-hidden">
+			<h2>Oh no!</h2>
+			<p>There seems to be an error. We'd hate for you to miss out.</p>
+			<a href="./">Try again?</a>
+		</div>
 	</section>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>	
 	<script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>

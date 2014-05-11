@@ -398,8 +398,8 @@ document.body.addEventListener('mousemove', function (evt) {
  	mouse.x = evt.clientX;
   	mouse.y = evt.clientY;
 
-	pickMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	pickMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	pickMouse.x = ( evt.clientX / window.innerWidth ) * 2 - 1;
+	pickMouse.y = - ( evt.clientY / window.innerHeight ) * 2 + 1;
 
 	if (mouseDown < 1) {
 	  if (evt.clientX > w - w * boundaryPct || evt.clientX < w * boundaryPct || evt.clientY > h - h * boundaryPct || evt.clientY < h * boundaryPct) {
@@ -604,6 +604,7 @@ function checkPicClick( id ) {
 			metaContext_caption.restore(); //Let's get it back
 			metaContext_caption.font = Math.floor(Math.random()*4) + 22 + "px Font";
 			metaContext_caption.textAlign = 'center';
+			metaContext_caption.globalCompositeOperation = 'multiply';
 			wrapText(metaContext_caption, metaDataText_caption, imageSize/2, imageSize/2, 400, 32 );
 			metaDataTexture_caption.needsUpdate = true; //Update dat texture
 

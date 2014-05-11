@@ -29,6 +29,8 @@ ambient.play();
 
 var url = document.location.href;
 
+if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
 //When the page loads, we want to get our photo links and notes from the database
 $(document).ready( function() {
     var response = '';
