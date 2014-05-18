@@ -1,0 +1,96 @@
+/***********************************************/
+/* iPads (portrait and landscape) ----------- */
+/**********************************************/
+
+@media screen and (max-width : 1024px) {
+* { margin: 0; padding: 0 }
+
+body, html {
+	overflow: scroll;	
+}
+
+.active {
+	border-bottom: 1px solid #eee;
+}
+
+#content {
+	width: 80%;
+	margin-left: 20%;
+	color: #fefefe;
+	height: 80%;
+	overflow: auto;
+
+	article {
+		padding: 0% 0% 5% 0%;
+		margin-right: 25%;
+		height: 100%;
+	}
+
+	.title {
+		font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+		font-weight: normal;
+		font-size: 1.6rem;
+		margin-bottom: 1%;
+		letter-spacing: 0.03rem;
+	}
+
+	.heading {
+		font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+		font-weight: normal;
+		font-style: italic;
+		font-size: 1.4rem;
+		margin-bottom: 1%;
+		letter-spacing: 0.03rem;
+		margin-bottom: 3%;
+	}
+
+	.subheading {
+		font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+		font-weight: normal;
+		color: #eee;
+		margin: 0.5% 0;
+	}
+
+	.date {
+		font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+		font-weight: normal;
+		font-size: 0.9rem;
+		font-style: italic;
+		letter-spacing: 0.03rem;
+		color: #898989;
+		padding-bottom: 1%;
+		border-bottom: 1px solid #aaa;
+		margin-bottom: 3%;
+	}
+
+	.text {
+		margin-bottom: 1.5%;
+		color: #ddd;
+		margin-bottom: 3%;
+	}
+
+	img {
+		width: 100%;
+		margin-bottom: 3%;
+	}
+
+	a:link, a:visited {
+		color: #aaa;
+		text-decoration: none;
+		transition: color 0.3s, background 0.3s;
+	}
+
+	a:hover {
+		color: #000;
+		background: #fefefe;
+		transition: color 0.3s, background 0.3s;
+	}
+
+	#manifesto {
+		height: 1000px;
+		background: url('../img/manifesto.png') top center no-repeat;
+		background-size: contain;
+	}
+}
+
+}
