@@ -1114,8 +1114,6 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
 
 function animate(t) {
 
-	console.log(refreshCounter);
-
 	if ( refreshCounter > 10000) {
         window.open("./pastpresent.php", "_blank");
         window.open('','_self');
