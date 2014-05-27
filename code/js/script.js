@@ -26,7 +26,7 @@ var vertBoundary = 1200;
 var boundaryMinVec = new THREE.Vector3( -1920, -1200, 0 );
 var boundaryMaxVec = new THREE.Vector3( 1920, 1200, 0 );
 var camMinVec = new THREE.Vector3( -1920 + w/2, -1200 + h/2, 1200);
-var camMaxVec = new THREE.Vector3( 1920 - w/2, 1200 - h/2, 12500);
+var camMaxVec = new THREE.Vector3( 1920 - w/2, 1200 - h/2, 3500);
 
 //Variable that controls the small rectangle in the HUD;
 var HUD = document.getElementById("HUD");
@@ -308,24 +308,6 @@ for (var i = 0; i < photoLinks.length; i++) {
 		planeList.push( new Plane( plane, vel, acc, id ) );
 		scene.add(plane);
 	}
-
- //    var texture = THREE.ImageUtils.loadTexture(photourl);
-	// var material = new THREE.MeshPhongMaterial({ map: texture });
-	// var plane = new THREE.Mesh(planeGeo, material);
-
-	// plane.position.x = x;
-	// plane.position.y = y;
-	// plane.position.z = z;
-
-	// plane.rotation.z = rot;
-
-	// var vel = new THREE.Vector3( 0, 0, 0 );
-	// var acc = new THREE.Vector3( 0, 0, 0 );
-	// var id = photoLinks[i]['link'];
-
-	// planeList.push( new Plane( plane, vel, acc, id ) );
-	// scene.add(plane);
-
 }
 
 //CREATE INITIAL BACKGROUND TEXTURE PLANE
@@ -335,44 +317,6 @@ var planeMat = new THREE.MeshPhongMaterial({ map: texture });
 var backgroundTexture = new THREE.Mesh(planeGeo, planeMat);
 backgroundTexture.position.z = -1;
 scene.add( backgroundTexture );
-
-//This function is used to remove planes that are too far away to see, removing unnecessary rendering.
-function checkPlaneDistance() {
-	planeRemoveScale = map_range(camera.position.z, 1000, 4500, 1000, 3000);
-
-	for (var i = 0; i < planeList.length; i++) {
-		var d = lineLength(planeList[i].pic.position.x, planeList[i].pic.position.y, camera.position.x, camera.position.y);
-		if (d > planeRemoveScale) {
-			scene.remove( planeList[i].pic );
-			planeList.splice(i,1);
-		}
-	}
-}
-
-//This function will change the texture of a plane when the mouse is moved away.
-function changeTexture() {
-
-	if (prevMouseX != moveInfo.x || prevMouseY != moveInfo.y) {
-  		prevMouseX = moveInfo.x;
-  		prevMouseY = moveInfo.y;
-  	
-		changeTextureScale = map_range(camera.position.z, 1000, 4500, 1200, 1400);
-		for (var i = 0; i < planeList.length; i++) {
-			var d = lineLength(planeList[i].pic.position.x, planeList[i].pic.position.y, lookAtThis.position.x, lookAtThis.position.y);
-			if (d < changeTextureScale && d > changeTextureScale / 2) {
-				// planeList[i].pic.material.color.r = Math.random();
-				// planeList[i].pic.material.color.g = Math.random();
-				// planeList[i].pic.material.color.b = Math.random();
-
-				var rand = Math.floor(Math.random() * 31);
-				var texture = THREE.ImageUtils.loadTexture("img/instagram_" + rand + ".jpg");
-				planeList[i].pic.material.map = texture;
-			}
-		}
-	}
-	window.setTimeout(changeTexture, 2000);
-}
-
 
 /***************************************************************************************************************/
 /***************************************************************************************************************/
@@ -516,10 +460,6 @@ function checkPicClick( id ) {
 			selectedImage = i;
 			selectedImagePos.set(planeList[i].pic.position.x, planeList[i].pic.position.y, planeList[i].pic.position.z);
 
-			//Set the position of the plane so that it's right in front of the camera
-			//planeList[i].pic.position.set(camera.position.x, camera.position.y, camera.position.z - 800);
-			//planeList[i].pic.rotation.set(0,0,0);
-
 			bMoveToFront = true;
 
 			//Let's also set the position of the meta plane so that we can see it later.
@@ -533,12 +473,9 @@ function checkPicClick( id ) {
 
 			//Instead of removing original light, turn down intensity to 0. 
 			//This removes the need to update the material later.
-			//light.intensity = 0.0;
 			bFadeLight = true;
 
 			//Add the new light to illuminate selected photo.
-			//scene.add(clickedLight);
-			//clickedLight.intensity = 1.0;
 			clickedLight.position.set(camera.position.x, camera.position.y, camera.position.z - 200);
 			clickedLight.target = lookAtThis;
 
@@ -620,8 +557,6 @@ function manageSelectedPhotoClick(x, y) {
 		turnPaper.play();
 
 		if (bIsFront) {
-			//rotateImage(1);
-
 			bRotatePic = true;
 			whichRotate = 0;
 
@@ -629,8 +564,6 @@ function manageSelectedPhotoClick(x, y) {
 		}
 
 		else {
-			//rotateImage(0);
-
 			bRotatePic = true;
 			whichRotate = 1;
 
@@ -645,8 +578,6 @@ function manageSelectedPhotoClick(x, y) {
 		turnPaper.play();
 
 		if (bIsFront) {
-			//rotateImage(1);
-
 			bRotatePic = true;
 			whichRotate = 2;
 
@@ -654,8 +585,6 @@ function manageSelectedPhotoClick(x, y) {
 		}
 
 		else {
-			//rotateImage(0);
-
 			bRotatePic = true;
 			whichRotate = 3;
 
@@ -679,21 +608,14 @@ function manageSelectedPhotoClick(x, y) {
 
 
 		//Reset light intensities back to normal.
-		//light.intensity = 1.0;
-		//clickedLight.intensity = 0.0;	
 		bFadeLight = true;
 
 		//Set plane back to original position and rotation
-		//planeList[selectedImage].pic.position.set(selectedImagePos.x, selectedImagePos.y, selectedImagePos.z);
-		//planeList[selectedImage].pic.rotation.set(0, 0, Math.random() * (Math.PI / 2) - (Math.PI/4));
 		planeList[selectedImage].pic.rotation.x = 0;
 		planeList[selectedImage].pic.rotation.y = 0;
 		bMoveToFront = true;
 		putBackRotation = Math.random() * (Math.PI / 2) - (Math.PI/4);
 		maxZDepth += 1.0;
-
-		//Set selectedImage back to a non-number
-		//selectedImage = -1; 
 
 		//Set our boolean to its "front" state, because when we first click it always faces front.
 		bIsFront = true;
